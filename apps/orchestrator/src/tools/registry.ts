@@ -4,6 +4,7 @@ import { suggestSupplyRun } from './suggestSupplyRun.js';
 import { matchGrants } from './matchGrants.js';
 import { runProcurementAgent } from './runProcurementAgent.js';
 import { confirmProcurementCheckout } from './confirmProcurementCheckout.js';
+import { acceptFinancingTerms } from './acceptFinancingTerms.js';
 import { runGrantAgent } from './runGrantAgent.js';
 import type { AgentEvent, Alert } from '@tng-rise/shared';
 
@@ -24,6 +25,7 @@ export const tools: Record<string, ToolHandler> = {
   matchGrants,
   runProcurementAgent,
   confirmProcurementCheckout,
+  acceptFinancingTerms,
   runGrantAgent,
 };
 

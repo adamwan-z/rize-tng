@@ -7,6 +7,10 @@ import type { LLMMessage } from '../llm/client.js';
 type Session = {
   messages: LLMMessage[];
   firedAlerts: Set<string>;
+  // Set when runProcurementAgent emits a financing_offer handoff. Cleared at
+  // the start of the next /chat turn (i.e. when Mak Cik replies). Gates
+  // acceptFinancingTerms so the LLM cannot auto-approve in the same turn.
+  pendingFinancingApprovalRunId: string | null;
 };
 
 const sessions = new Map<string, Session>();
@@ -14,10 +18,22 @@ const sessions = new Map<string, Session>();
 export function getSession(id: string): Session {
   let s = sessions.get(id);
   if (!s) {
-    s = { messages: [], firedAlerts: new Set() };
+    s = { messages: [], firedAlerts: new Set(), pendingFinancingApprovalRunId: null };
     sessions.set(id, s);
   }
   return s;
+}
+
+export function setPendingFinancingApproval(id: string, runId: string): void {
+  getSession(id).pendingFinancingApprovalRunId = runId;
+}
+
+export function getPendingFinancingApproval(id: string): string | null {
+  return getSession(id).pendingFinancingApprovalRunId;
+}
+
+export function clearPendingFinancingApproval(id: string): void {
+  getSession(id).pendingFinancingApprovalRunId = null;
 }
 
 export function setMessages(id: string, messages: LLMMessage[]): void {

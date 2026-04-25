@@ -100,6 +100,37 @@ export const TOOL_SCHEMAS = [
     },
   },
   {
+    name: 'acceptFinancingTerms',
+    description:
+      'Accept the SOS Credit terms on behalf of the merchant after she has explicitly agreed in chat (ya / setuju / agree / ok). Bridges the financing card back into the normal procurement_confirm flow so the next step is the final payment confirmation. Use ONLY when runProcurementAgent emitted a financing_offer handoff AND the merchant has agreed to the terms.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        runId: { type: 'string', description: 'The runId returned by runProcurementAgent.' },
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              sku: { type: 'string' },
+              quantity: { type: 'number' },
+              name: { type: 'string' },
+            },
+            required: ['sku', 'quantity'],
+          },
+          description: 'Cart items from the previous runProcurementAgent result.',
+        },
+        subtotal: { type: 'string', description: 'Cart subtotal string from runProcurementAgent.' },
+        total: { type: 'string', description: 'Checkout total string from runProcurementAgent.' },
+        approvedAmountRm: {
+          type: 'number',
+          description: 'SOS Credit approved amount from the financing_offer handoff.',
+        },
+      },
+      required: ['runId', 'items', 'total', 'approvedAmountRm'],
+    },
+  },
+  {
     name: 'runGrantAgent',
     description:
       'Open a grant portal and fill the application form. Stops before Submit so the merchant reviews and submits themselves. Use only after matchGrants and the user confirms which grant to apply for.',

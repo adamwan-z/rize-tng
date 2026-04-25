@@ -16,5 +16,29 @@
     "gas": 350,
     "supplies": 4200,
     "other": 300
+  },
+  "cashOnHandRm": 10,
+  "tngFinancing": {
+    "productName": "SOS Credit",
+    "providerName": "TNG Digital Sdn Bhd",
+    "preApproved": true,
+    "minAmountRm": 50,
+    "maxAmountRm": 500,
+    "tenureDays": 30,
+    "flatFeePct": 1.5,
+    "aprPct": 18,
+    "dailyDeductionPctOfSales": 5,
+    "processingFeeRm": 0,
+    "earlySettlementFeeRm": 0,
+    "lateChargePctPerMonth": 1,
+    "summary": "Pre-approved emergency working capital, auto-repaid from your daily TNG eWallet sales.",
+    "tnc": [
+      "Approved amount terus pergi ke checkout. Guna untuk pembelian supply ni je.",
+      "Flat fee 1.5% atas approved amount. Tiada processing fee.",
+      "Tenure 30 hari. Repayment auto-deduct 5% daripada jualan harian TNG eWallet sampai habis.",
+      "Boleh settle awal bila-bila masa. No early settlement fee.",
+      "Lepas 30 hari, late charge 1% sebulan atas baki tertunggak.",
+      "SOS Credit disediakan oleh TNG Digital Sdn Bhd untuk merchant TNG eWallet pre-approved."
+    ]
   }
 }

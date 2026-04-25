@@ -34,7 +34,14 @@ export const AgentEvent = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('handoff'),
-    kind: z.enum(['payment', 'review_submit', 'email', 'supply_list', 'procurement_confirm']),
+    kind: z.enum([
+      'payment',
+      'review_submit',
+      'email',
+      'supply_list',
+      'procurement_confirm',
+      'financing_offer',
+    ]),
     payload: z.record(z.unknown()),
   }),
   z.object({ type: z.literal('error'), message: z.string() }),
@@ -43,6 +50,24 @@ export const AgentEvent = z.discriminatedUnion('type', [
 export type AgentEvent = z.infer<typeof AgentEvent>;
 
 // ===== Merchant profile =====
+export const TngFinancingTerms = z.object({
+  productName: z.string(),
+  providerName: z.string(),
+  preApproved: z.boolean(),
+  minAmountRm: z.number(),
+  maxAmountRm: z.number(),
+  tenureDays: z.number(),
+  flatFeePct: z.number(),
+  aprPct: z.number(),
+  dailyDeductionPctOfSales: z.number(),
+  processingFeeRm: z.number(),
+  earlySettlementFeeRm: z.number(),
+  lateChargePctPerMonth: z.number(),
+  summary: z.string(),
+  tnc: z.array(z.string()),
+});
+export type TngFinancingTerms = z.infer<typeof TngFinancingTerms>;
+
 export const MerchantProfile = z.object({
   id: z.string(),
   name: z.string(),
@@ -59,6 +84,8 @@ export const MerchantProfile = z.object({
     supplies: z.number(),
     other: z.number(),
   }),
+  cashOnHandRm: z.number(),
+  tngFinancing: TngFinancingTerms.optional(),
 });
 export type MerchantProfile = z.infer<typeof MerchantProfile>;
 

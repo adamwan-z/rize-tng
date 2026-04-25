@@ -1,6 +1,7 @@
 import { env } from '../lib/env.js';
-import type { AgentEvent } from '@tng-rise/shared';
+import type { AgentEvent, MerchantProfile } from '@tng-rise/shared';
 import type { ToolHandler } from './registry.js';
+import { setPendingFinancingApproval } from '../agent/memory.js';
 
 // Calls the Python browser-agent service and forwards browser_step events.
 // Phase 1 of the live Lotus flow: fills the cart, navigates to checkout,
@@ -10,7 +11,7 @@ import type { ToolHandler } from './registry.js';
 //
 // The LLM produces item names; browser-agent demands SKUs (the API rejects
 // unknown ones). We translate name -> sku via the catalog mock-tng serves.
-export const runProcurementAgent: ToolHandler = async function* (input) {
+export const runProcurementAgent: ToolHandler = async function* (input, ctx) {
   const rawItems = (input.items as Array<{ name: string; quantity: number }>) ?? [];
   const resolved = await Promise.all(
     rawItems.map(async (it) => ({
@@ -87,6 +88,67 @@ export const runProcurementAgent: ToolHandler = async function* (input) {
     };
   }
 
+  // Cash check. If the cart total exceeds Mak Cik's cash on hand, branch to
+  // the SOS Credit financing flow instead of the normal payment confirmation.
+  // The browser is still paused at checkout either way; we just decide which
+  // handoff card the FE shows next.
+  const profile = await fetchMerchantProfile();
+  const totalRm = parseRm(total);
+  const shortfallRm = totalRm !== null ? totalRm - profile.cashOnHandRm : null;
+  const needsFinancing =
+    shortfallRm !== null && shortfallRm > 0 && profile.tngFinancing !== undefined;
+
+  if (needsFinancing && profile.tngFinancing) {
+    const terms = profile.tngFinancing;
+    const approvedAmountRm = clamp(
+      Math.ceil(shortfallRm / 10) * 10,
+      terms.minAmountRm,
+      terms.maxAmountRm,
+    );
+    const repayableAmountRm = round2(approvedAmountRm * (1 + terms.flatFeePct / 100));
+
+    // Gate acceptFinancingTerms until Mak Cik sends a new chat message. The
+    // LLM otherwise tends to call it in the same turn and the financing
+    // looks auto-approved. The gate is cleared at the top of the next
+    // runAgent call (see core.ts).
+    setPendingFinancingApproval(ctx.sessionId, runId);
+
+    yield {
+      type: 'handoff',
+      kind: 'financing_offer',
+      payload: {
+        runId,
+        items: enrichedItems,
+        subtotal,
+        total,
+        totalRm,
+        cashOnHandRm: profile.cashOnHandRm,
+        shortfallRm,
+        approvedAmountRm,
+        repayableAmountRm,
+        terms,
+      },
+    };
+
+    return {
+      ok: true,
+      runId,
+      items: enrichedItems,
+      subtotal,
+      total,
+      cashOnHandRm: profile.cashOnHandRm,
+      shortfallRm,
+      financing: {
+        productName: terms.productName,
+        approvedAmountRm,
+        repayableAmountRm,
+        tenureDays: terms.tenureDays,
+      },
+      message:
+        `Cart filled, browser paused at checkout. Total ${total} but Mak Cik only has RM ${profile.cashOnHandRm.toFixed(2)} cash on hand. SOS Credit (${terms.productName}) is pre-approved for RM ${approvedAmountRm}, repayable RM ${repayableAmountRm} over ${terms.tenureDays} hari (auto-deduct ${terms.dailyDeductionPctOfSales}% of daily TNG sales). Tell her gently that cash tak cukup, then say SOS Credit boleh tolong cover and the terms are in the card. Ask if she agrees to the terms (ya/setuju). DO NOT call any tool yet. Only after she agrees, call acceptFinancingTerms with the runId, items, subtotal, total, and approvedAmountRm.`,
+    };
+  }
+
   yield {
     type: 'handoff',
     kind: 'procurement_confirm',
@@ -108,6 +170,26 @@ export const runProcurementAgent: ToolHandler = async function* (input) {
       'Cart filled, browser paused at checkout. Restate items + total to the merchant and ask for explicit confirmation. Only call confirmProcurementCheckout(runId) after she says yes / boleh / confirm.',
   };
 };
+
+async function fetchMerchantProfile(): Promise<MerchantProfile> {
+  const res = await fetch(`${env.MOCK_TNG_URL}/merchant`);
+  if (!res.ok) throw new Error(`mock-tng /merchant returned ${res.status}`);
+  return (await res.json()) as MerchantProfile;
+}
+
+function parseRm(s: string | null): number | null {
+  if (!s) return null;
+  const match = s.replace(/,/g, '').match(/-?\d+(?:\.\d+)?/);
+  return match ? Number(match[0]) : null;
+}
+
+function clamp(value: number, min: number, max: number): number {
+  return Math.max(min, Math.min(max, value));
+}
+
+function round2(value: number): number {
+  return Math.round(value * 100) / 100;
+}
 
 let _catalog: Array<{ sku: string; name: string; brand?: string }> | null = null;
 

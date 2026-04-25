@@ -4,7 +4,13 @@ import type { LLMContentBlock, LLMMessage, LLMTool } from '../llm/client.js';
 import { TOOL_SCHEMAS } from './toolSchemas.js';
 import { SYSTEM_PROMPT } from './prompts.js';
 import { tools, hasTool } from '../tools/registry.js';
-import { getSession, setMessages, alertAlreadyFired, markAlertFired } from './memory.js';
+import {
+  getSession,
+  setMessages,
+  alertAlreadyFired,
+  markAlertFired,
+  clearPendingFinancingApproval,
+} from './memory.js';
 
 const MAX_TURNS = 6;
 
@@ -17,6 +23,10 @@ export async function* runAgent(input: {
 }): AsyncGenerator<AgentEvent, void, void> {
   const llm = getLLM();
   const session = getSession(input.sessionId);
+  // A new user message means any pending financing approval gate should be
+  // released. If she said yes, the LLM will now be allowed to call
+  // acceptFinancingTerms; if she said no, the flag was stale anyway.
+  clearPendingFinancingApproval(input.sessionId);
   const messages: LLMMessage[] = [
     ...session.messages,
     { role: 'user', content: input.userMessage },
