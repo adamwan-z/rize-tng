@@ -21,3 +21,31 @@ body {
   background: var(--tng-yellow);
   color: var(--ink-900);
 }
+
+/* Respect users who opted out of motion. Disables ping/spin/transition flourishes. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Typing indicator: three dots that fade in/out in sequence. */
+@keyframes tng-typing-bounce {
+  0%, 80%, 100% { opacity: 0.25; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-2px); }
+}
+.tng-typing-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: var(--ink-500);
+  animation: tng-typing-bounce 1.2s ease-in-out infinite;
+}
+.tng-typing-dot:nth-child(2) { animation-delay: 0.15s; }
+.tng-typing-dot:nth-child(3) { animation-delay: 0.3s; }

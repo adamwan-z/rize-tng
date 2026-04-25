@@ -57,10 +57,10 @@ export function Message({
     <div className={clsx('flex', isUser ? 'justify-end' : 'justify-start')}>
       <div
         className={clsx(
-          'max-w-[80%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed',
+          'max-w-[80%] rounded-2xl px-4 py-2.5 text-[15px] leading-relaxed font-body',
           isUser
-            ? 'bg-tng-blue text-white rounded-br-sm font-body'
-            : 'bg-surface-1 border border-surface-2 text-ink-900 rounded-bl-sm font-body',
+            ? 'bg-tng-blue text-white rounded-br-sm shadow-sm'
+            : 'bg-surface-1 border border-surface-2 text-ink-900 rounded-bl-sm shadow-[0_1px_2px_rgba(26,26,26,0.04)]',
         )}
       >
         {text ? (
@@ -71,7 +71,15 @@ export function Message({
             {text}
           </ReactMarkdown>
         ) : streaming ? (
-          <span className="text-ink-500 italic font-editorial">Sekejap ya</span>
+          <span
+            role="status"
+            aria-label="Rise tengah taip"
+            className="inline-flex items-center gap-1 py-1.5"
+          >
+            <span className="tng-typing-dot" />
+            <span className="tng-typing-dot" />
+            <span className="tng-typing-dot" />
+          </span>
         ) : null}
       </div>
     </div>

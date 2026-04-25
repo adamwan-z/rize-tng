@@ -44,7 +44,7 @@ export function AP2PaymentCard({ amountRm, payee, onHold }: AP2PaymentCardProps)
         Paying from eWallet
       </span>
       <div>
-        <div className="font-display font-extrabold text-[64px] leading-none tracking-tight">
+        <div className="font-display font-extrabold text-[64px] leading-none tracking-tight tabular-nums">
           <span className="font-mono text-base font-medium align-middle mr-2 text-white/70 tracking-wider">
             RM
           </span>
@@ -58,7 +58,7 @@ export function AP2PaymentCard({ amountRm, payee, onHold }: AP2PaymentCardProps)
         onPointerUp={cancel}
         onPointerLeave={cancel}
         onPointerCancel={cancel}
-        className="relative w-full overflow-hidden justify-center inline-flex items-center gap-2 font-display font-bold text-base text-ink-900 bg-tng-yellow hover:bg-tng-yellow-deep px-5 py-4 rounded-lg shadow-cta active:translate-y-0.5 active:shadow-none transition select-none"
+        className="relative w-full overflow-hidden justify-center inline-flex items-center gap-2 font-display font-bold text-base text-ink-900 bg-tng-yellow hover:bg-tng-yellow-deep px-5 py-4 rounded-lg shadow-cta active:translate-y-0.5 active:shadow-none transition-colors duration-200 select-none cursor-pointer touch-manipulation"
       >
         <span
           aria-hidden

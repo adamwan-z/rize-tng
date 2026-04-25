@@ -30,7 +30,7 @@ export function DeclineCard({
       <div className="font-mono text-[11px] font-semibold uppercase tracking-widest text-tng-orange mb-3">
         Tahan dulu · CFO check
       </div>
-      <h3 className="font-display font-bold text-[20px] leading-tight tracking-tight text-ink-900 mb-2">
+      <h3 className="font-display font-bold text-[20px] leading-tight tracking-tight text-ink-900 mb-2 text-balance">
         Saya tak boleh approve {what} sekarang.
       </h3>
       <p className="text-[15px] leading-relaxed text-ink-700 mb-4">{reason}</p>
@@ -41,7 +41,7 @@ export function DeclineCard({
               <dt className="font-mono text-[10px] uppercase tracking-widest text-ink-500">
                 Cash on hand
               </dt>
-              <dd className="font-display font-bold text-ink-900 mt-0.5">
+              <dd className="font-display font-bold text-ink-900 mt-0.5 tabular-nums">
                 {formatRm(cashOnHandRm)}
               </dd>
             </div>
@@ -64,7 +64,7 @@ export function DeclineCard({
           <button
             type="button"
             onClick={alternative.onClick}
-            className="inline-flex items-center gap-2 font-display font-semibold text-[14px] text-ink-900 bg-tng-yellow hover:bg-tng-yellow-deep px-4 py-2 rounded-lg shadow-cta active:translate-y-0.5 active:shadow-none transition"
+            className="inline-flex items-center gap-2 font-display font-semibold text-[14px] text-ink-900 bg-tng-yellow hover:bg-tng-yellow-deep px-4 py-2 rounded-lg shadow-cta active:translate-y-0.5 active:shadow-none transition-colors duration-200 cursor-pointer"
           >
             {alternative.cta}
           </button>

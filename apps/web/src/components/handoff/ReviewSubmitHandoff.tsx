@@ -22,7 +22,7 @@ export function ReviewSubmitHandoff({ payload }: { payload: Record<string, unkno
         href={url}
         target="_blank"
         rel="noopener noreferrer"
-        className="inline-block rounded-lg bg-tng-green px-4 py-2 text-white text-sm font-display font-semibold hover:bg-tng-green/90"
+        className="inline-flex items-center gap-2 rounded-lg bg-tng-yellow hover:bg-tng-yellow-deep px-4 py-2 text-ink-900 text-sm font-display font-bold shadow-cta active:translate-y-0.5 active:shadow-none transition-colors duration-200 cursor-pointer"
       >
         Take over and submit
       </a>

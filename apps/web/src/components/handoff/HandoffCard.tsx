@@ -2,6 +2,7 @@ import { AP2PaymentCard } from '../agent/AP2PaymentCard.js';
 import { DeclineCard } from '../agent/DeclineCard.js';
 import { ReviewSubmitHandoff } from './ReviewSubmitHandoff.js';
 import { EmailHandoff } from './EmailHandoff.js';
+import { SupplyListHandoff } from './SupplyListHandoff.js';
 
 // Lane B has widened the shared union to include 'supply_list' (this branch).
 // Lane A still keeps 'decline' as a local widening pending a contract update.
@@ -44,7 +45,6 @@ export function HandoffCard({
     case 'email':
       return <EmailHandoff payload={payload} />;
     case 'supply_list':
-      // Lane A: replace with SupplyListHandoff component when ready.
-      return <EmailHandoff payload={payload} />;
+      return <SupplyListHandoff payload={payload} />;
   }
 }

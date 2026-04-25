@@ -61,7 +61,7 @@ export function ProcurementCard({
               </span>
             </div>
             {showPrices && (
-              <span className="font-mono text-sm font-medium text-ink-900 tracking-wide">
+              <span className="font-mono text-sm font-medium text-ink-900 tracking-wide tabular-nums">
                 {formatRm(item.priceRm)}
               </span>
             )}
@@ -73,7 +73,7 @@ export function ProcurementCard({
           <span className="font-mono text-[11px] font-semibold uppercase tracking-widest text-ink-700">
             Total
           </span>
-          <span className="font-display font-bold text-[22px] tracking-tight text-ink-900">
+          <span className="font-display font-bold text-[22px] tracking-tight text-ink-900 tabular-nums">
             {formatRm(total)}
           </span>
         </div>
@@ -86,14 +86,14 @@ export function ProcurementCard({
         <button
           type="button"
           onClick={onPay}
-          className="flex-1 justify-center inline-flex items-center gap-2 font-display font-bold text-[15px] text-ink-900 bg-tng-yellow hover:bg-tng-yellow-deep px-5 py-3 rounded-lg shadow-cta active:translate-y-0.5 active:shadow-none transition"
+          className="flex-1 justify-center inline-flex items-center gap-2 font-display font-bold text-[15px] text-ink-900 bg-tng-yellow hover:bg-tng-yellow-deep px-5 py-3 rounded-lg shadow-cta active:translate-y-0.5 active:shadow-none transition-colors duration-200 cursor-pointer"
         >
           Pay with eWallet
         </button>
         <button
           type="button"
           onClick={onEdit}
-          className="flex-1 justify-center inline-flex items-center gap-2 font-display font-semibold text-[15px] text-ink-900 bg-transparent border border-surface-2 hover:bg-surface-2 px-5 py-3 rounded-lg"
+          className="flex-1 justify-center inline-flex items-center gap-2 font-display font-semibold text-[15px] text-ink-900 bg-transparent border border-surface-2 hover:bg-surface-2 px-5 py-3 rounded-lg transition-[background-color,transform] duration-200 active:scale-[0.96] cursor-pointer"
         >
           Edit list
         </button>

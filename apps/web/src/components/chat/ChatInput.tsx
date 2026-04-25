@@ -1,6 +1,8 @@
-import { useState, type FormEvent, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
 import { Send } from 'lucide-react';
 import clsx from 'clsx';
+
+const MAX_TEXTAREA_HEIGHT = 160;
 
 export function ChatInput({
   onSubmit,
@@ -10,7 +12,16 @@ export function ChatInput({
   disabled?: boolean;
 }) {
   const [value, setValue] = useState('');
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const hasText = value.trim().length > 0;
+
+  // Auto-grow up to MAX_TEXTAREA_HEIGHT, then scroll inside the textarea.
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+  }, [value]);
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -30,26 +41,27 @@ export function ChatInput({
   return (
     <form
       onSubmit={handleSubmit}
-      className="border-t border-surface-2 bg-surface-1 py-3 sticky bottom-0"
+      className="border-t border-surface-2 bg-surface-1 py-3 sticky bottom-0 z-10"
     >
       <div className="flex gap-2 items-end">
         <textarea
+          ref={textareaRef}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKey}
           rows={1}
           disabled={disabled}
           placeholder="Tanya apa-apa, contoh: macam mana business hari ni?"
-          className="flex-1 resize-none rounded-xl border border-surface-2 px-3 py-2.5 text-[15px] font-body bg-surface-1 text-ink-900 placeholder:text-ink-300 focus:outline-none focus:ring-4 focus:ring-tng-blue/15 focus:border-tng-blue disabled:bg-surface-2"
+          className="flex-1 resize-none rounded-xl border border-surface-2 px-3 py-2.5 text-[15px] font-body bg-surface-1 text-ink-900 placeholder:text-ink-300 focus:outline-none focus:ring-4 focus:ring-tng-blue/15 focus:border-tng-blue disabled:bg-surface-2 disabled:cursor-not-allowed transition-colors duration-200 leading-relaxed overflow-y-auto"
         />
         <button
           type="submit"
           aria-label="Hantar mesej"
           disabled={disabled || !hasText}
           className={clsx(
-            'rounded-xl w-11 h-11 flex items-center justify-center transition',
+            'rounded-xl w-11 h-11 flex items-center justify-center transition-[background-color,color,transform] duration-200 focus:outline-none focus:ring-4 focus:ring-tng-blue/25',
             hasText
-              ? 'bg-tng-blue hover:bg-tng-blue-dark text-white'
+              ? 'bg-tng-blue hover:bg-tng-blue-dark text-white cursor-pointer active:scale-[0.96]'
               : 'bg-surface-2 text-ink-300 cursor-not-allowed',
           )}
         >
