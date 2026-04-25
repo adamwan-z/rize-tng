@@ -9,5 +9,11 @@
   },
   "registeredSince": "2024-03-12",
   "ssm": "JM0823491-W",
-  "monthlyRevenueRm": 14800
+  "monthlyRevenueRm": 14800,
+  "monthlyCostsRm": {
+    "rent": 800,
+    "utilities": 200,
+    "gas": 350,
+    "other": 300
+  }
 }
