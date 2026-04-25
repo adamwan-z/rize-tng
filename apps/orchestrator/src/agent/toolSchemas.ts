@@ -4,25 +4,43 @@
 
 export const TOOL_SCHEMAS = [
   {
-    name: 'readSales',
+    name: 'analyzeRevenue',
     description:
-      'Get the merchant transaction history for a given period. Use when the user asks about revenue, today, this week, or how the business is doing.',
+      'Analyze merchant revenue for a period. Returns totals, count, average ticket, trend vs the prior period of the same length, day-of-week breakdown, peak hours, and alerts. Use when the user asks about jualan, revenue, business, today, this week, or this month.',
     input_schema: {
       type: 'object' as const,
       properties: {
         period: {
           type: 'string',
-          enum: ['today', '7d', '30d'],
-          description: 'Time window. Default to 7d if user is vague.',
+          enum: ['today', '7d', '30d', 'mtd'],
+          description: 'Time window. Default to 7d if vague.',
         },
       },
       required: ['period'],
     },
   },
   {
-    name: 'readStock',
+    name: 'analyzeStock',
     description:
-      'Get current stock levels and weekly usage for the merchant. Use when the user asks what they need to restock, or about ingredient supply.',
+      'Get current stock levels with qualitative urgency band (ok / low / critical) per item plus alerts for items running low. Use when the user asks about stok, barang, restock, or what is running out. Never quote days-of-cover numbers; the urgency band is the safe-to-surface signal.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {},
+    },
+  },
+  {
+    name: 'analyzeRunway',
+    description:
+      'Compute the merchant cashflow position: weekly inflow, estimated weekly outflow, runway, and a qualitative profit band (comfortable / tight / losing). Use when the user asks about cashflow, untung, kos, kewangan, or whether the business is healthy. Only weeklyInflowRm and profitEstimate are safe to surface to the user; do not quote weeklyNet, runwayWeeks, breakevenRevenue, or any monthly cost amount.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {},
+    },
+  },
+  {
+    name: 'suggestSupplyRun',
+    description:
+      'Build a draft shopping list for items running low or critical. Returns suggested quantities and approximate costs, and emits a supply-list handoff card the user can act on. Use when the user asks about restock, supply run, beli barang, or after analyzeStock flags critical urgency.',
     input_schema: {
       type: 'object' as const,
       properties: {},
