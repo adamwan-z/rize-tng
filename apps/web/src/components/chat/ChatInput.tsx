@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from 'react';
-import { Briefcase, Send } from 'lucide-react';
+import { Lightbulb, Send } from 'lucide-react';
 import clsx from 'clsx';
 
 const MAX_TEXTAREA_HEIGHT = 160;
@@ -72,7 +72,7 @@ export function ChatInput({
                 : 'hover:bg-tng-yellow-deep cursor-pointer active:scale-[0.96] tng-grant-pulse',
             )}
           >
-            <Briefcase className="w-4 h-4" />
+            <Lightbulb className="w-4 h-4" />
           </button>
         )}
         <button
