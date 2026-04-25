@@ -71,9 +71,11 @@ export function MessageList({ items, streaming }: { items: ChatItem[]; streaming
             return (
               <div
                 key={item.id}
-                className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+                className="rounded-2xl p-4 border border-tng-pink/30 text-tng-pink text-sm leading-relaxed"
+                style={{ background: 'rgba(239, 78, 116, 0.06)' }}
               >
-                Alamak, ada masalah: {item.message}
+                <span className="font-display font-semibold mr-2">Alamak,</span>
+                {item.message}
               </div>
             );
         }
