@@ -1,12 +1,16 @@
 export function RiseMark() {
   return (
-    <div className="flex items-center gap-3">
+    <div
+      className="flex items-center gap-3"
+      role="img"
+      aria-label="Living with TNG eWallet, Rise"
+    >
       <div className="flex flex-col text-[10px] font-mono font-semibold uppercase tracking-widest text-ink-500 leading-tight">
         <span>Living</span>
         <span>with</span>
       </div>
       <div className="flex items-center gap-2">
-        <span className="w-2.5 h-2.5 bg-tng-yellow rounded-sm" />
+        <span aria-hidden className="w-2.5 h-2.5 bg-tng-yellow rounded-sm" />
         <div className="flex flex-col leading-none">
           <span className="font-display font-extrabold text-tng-blue text-[20px] tracking-tight">
             TNG

@@ -11,8 +11,12 @@ export function App() {
       <header className="border-b border-surface-2 bg-surface-1">
         <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <RiseMark />
-          <span className="hidden sm:inline-flex items-center gap-2 px-2 py-1 rounded-full bg-tng-green/10 text-tng-green text-[10px] font-mono font-semibold uppercase tracking-widest">
-            <span className="w-1.5 h-1.5 rounded-full bg-tng-green" />
+          <span
+            role="status"
+            aria-label="Connection status: online"
+            className="hidden sm:inline-flex items-center gap-2 px-2 py-1 rounded-full bg-tng-green/10 text-tng-green text-[10px] font-mono font-semibold uppercase tracking-widest"
+          >
+            <span aria-hidden className="w-1.5 h-1.5 rounded-full bg-tng-green" />
             Online
           </span>
         </div>
