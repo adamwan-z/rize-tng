@@ -208,8 +208,8 @@ async def _scroll_preview(page: Any, pages_count: int) -> None:
 
     Total time scales with page count so a one-page pack does not linger.
     """
-    total_s = 3.0 + 1.2 * (pages_count - 1)
-    steps = 24
+    total_s = 6.0 + 2.4 * (pages_count - 1)
+    steps = 36
     delay = total_s / steps
     for i in range(1, steps + 1):
         progress = i / steps

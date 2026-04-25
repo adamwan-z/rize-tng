@@ -135,13 +135,13 @@ async function fetchProfile(): Promise<MerchantProfile> {
 function toGrantProfile(p: MerchantProfile, requestedAmountRm: number) {
   return {
     full_name: p.name,
-    nric: '740512-10-5234',
-    mobile: '012-3456789',
-    email: 'merchant@example.com',
+    nric: '700815-14-5238',
+    mobile: '012-3457821',
+    email: 'burger.bakar.makcik@gmail.com',
     business_name: p.businessName,
     business_reg_no: p.ssm ?? 'JM0000000-X',
     business_type: 'F&B',
-    business_address: `${p.location.city}, ${p.location.state}`,
+    business_address: 'Lot 12, Jalan Raja Muda Musa, Kampung Baru, 50300 Kuala Lumpur',
     years_operating: yearsSince(p.registeredSince),
     employee_count: 3,
     annual_revenue: p.monthlyRevenueRm * 12,

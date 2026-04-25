@@ -116,7 +116,13 @@ async def _run_scripted(
 ) -> AsyncIterator[dict[str, Any]]:
     """Deterministic Playwright fill. Ports fill_scripted.py."""
     slow_mo = int(os.environ.get("SLOW_MO_MS", "450"))
+    type_delay = int(os.environ.get("TYPE_DELAY_MS", "30"))
     p = profile
+
+    async def type_into(selector: str, text: str) -> None:
+        # Human-paced keystroke animation. Field is empty after navigation, so
+        # press_sequentially appends from a clean state.
+        await page.locator(selector).press_sequentially(text, delay=type_delay)
 
     async with async_playwright() as pw:
         browser = await pw.chromium.launch(headless=HEADLESS, slow_mo=slow_mo)
@@ -133,10 +139,10 @@ async def _run_scripted(
         )
 
         # ---- Step 1: Applicant ----
-        await page.fill('input[name="full_name"]', p.full_name)
-        await page.fill('input[name="nric"]', p.nric)
-        await page.fill('input[name="mobile"]', p.mobile)
-        await page.fill('input[name="email"]', p.email)
+        await type_into('input[name="full_name"]', p.full_name)
+        await type_into('input[name="nric"]', p.nric)
+        await type_into('input[name="mobile"]', p.mobile)
+        await type_into('input[name="email"]', p.email)
         yield await emit_step(
             run_id=run_id, step=3, description=f"Masukkan nama: {p.full_name}", page=page
         )
@@ -147,12 +153,12 @@ async def _run_scripted(
         yield await emit_step(
             run_id=run_id, step=4, description="Step 2/3 Business info", page=page
         )
-        await page.fill('input[name="business_name"]', p.business_name)
-        await page.fill('input[name="business_reg_no"]', p.business_reg_no)
+        await type_into('input[name="business_name"]', p.business_name)
+        await type_into('input[name="business_reg_no"]', p.business_reg_no)
         await page.select_option('select[name="business_type"]', value=p.business_type)
-        await page.fill('textarea[name="business_address"]', p.business_address)
-        await page.fill('input[name="years_operating"]', str(p.years_operating))
-        await page.fill('input[name="employee_count"]', str(p.employee_count))
+        await type_into('textarea[name="business_address"]', p.business_address)
+        await type_into('input[name="years_operating"]', str(p.years_operating))
+        await type_into('input[name="employee_count"]', str(p.employee_count))
         yield await emit_step(
             run_id=run_id, step=5, description=f"Masukkan SSM: {p.business_reg_no}", page=page
         )
@@ -163,9 +169,9 @@ async def _run_scripted(
         yield await emit_step(
             run_id=run_id, step=6, description="Step 3/3 Funding details", page=page
         )
-        await page.fill('input[name="annual_revenue"]', str(p.annual_revenue))
-        await page.fill('input[name="requested_amount"]', str(p.requested_amount))
-        await page.fill('textarea[name="purpose"]', p.purpose)
+        await type_into('input[name="annual_revenue"]', str(p.annual_revenue))
+        await type_into('input[name="requested_amount"]', str(p.requested_amount))
+        await type_into('textarea[name="purpose"]', p.purpose)
         await page.check('input[name="declare_truthful"]')
         await page.check('input[name="declare_terms"]')
         yield await emit_step(
