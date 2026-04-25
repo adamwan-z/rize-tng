@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "namespace": "tng-rise.local",
+  "services": [
+    {
+      "portName": "mock-tng-5050",
+      "discoveryName": "mock-tng",
+      "clientAliases": [
+        { "port": 5050, "dnsName": "mock-tng.tng-rise.local" }
+      ]
+    }
+  ]
+}

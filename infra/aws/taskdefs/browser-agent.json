@@ -1,0 +1,59 @@
+{
+  "family": "tng-rise-browser-agent",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "2048",
+  "memory": "4096",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/tngRiseTaskExecution",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/tngRiseTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "browser-agent",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/tng-rise/browser-agent:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "name": "browser-agent-5001",
+          "containerPort": 5001,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "5001" },
+        { "name": "HEADLESS", "value": "1" },
+        { "name": "QWEN_MODEL", "value": "qwen-vl-max" },
+        { "name": "MOCK_TNG_URL", "value": "http://mock-tng.tng-rise.local:5050" },
+        { "name": "OSS_REGION", "value": "oss-ap-southeast-3" },
+        { "name": "OSS_BUCKET", "value": "tng-rise-screenshots" },
+        { "name": "OSS_ENDPOINT", "value": "https://oss-ap-southeast-3.aliyuncs.com" }
+      ],
+      "secrets": [
+        {
+          "name": "DASHSCOPE_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:tng-rise/dashscope-key"
+        },
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:tng-rise/anthropic-key"
+        },
+        {
+          "name": "OSS_ACCESS_KEY_ID",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:tng-rise/oss-access-key-id"
+        },
+        {
+          "name": "OSS_ACCESS_KEY_SECRET",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:tng-rise/oss-access-secret"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/tng-rise/browser-agent",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}
