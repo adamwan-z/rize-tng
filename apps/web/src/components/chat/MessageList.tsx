@@ -24,7 +24,7 @@ export type ChatItem =
   | {
       kind: 'handoff';
       id: string;
-      handoffKind: 'payment' | 'review_submit' | 'email';
+      handoffKind: 'payment' | 'review_submit' | 'email' | 'supply_list';
       payload: Record<string, unknown>;
     }
   | { kind: 'error'; id: string; message: string };

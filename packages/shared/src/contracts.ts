@@ -34,7 +34,7 @@ export const AgentEvent = z.discriminatedUnion('type', [
   }),
   z.object({
     type: z.literal('handoff'),
-    kind: z.enum(['payment', 'review_submit', 'email']),
+    kind: z.enum(['payment', 'review_submit', 'email', 'supply_list']),
     payload: z.record(z.unknown()),
   }),
   z.object({ type: z.literal('error'), message: z.string() }),
