@@ -32,7 +32,7 @@ Every node is fake. The pipes are real. From here, lanes swap in real logic behi
 ## Phase order
 
 1. **Skeleton** (3 PM to 4:30 PM): contracts locked, Docker Compose running, hello-world from each service, frontend renders mock stream
-2. **Vertical slice** (4:30 PM to 6 PM): real LLM in orchestrator, real mock TNG data, one tool (`readSales`) wired end-to-end
+2. **Vertical slice** (4:30 PM to 6 PM): real LLM in orchestrator, real mock TNG data, one tool (`analyzeRevenue`) wired end-to-end
 3. **Tool implementations** (6 PM to 1 AM): all tools wired, both BrowserUse flows working
 4. **Model swap and multi-cloud** (1 AM to 4 AM): Bedrock validated, OSS integration, optional Qwen for Malay copy
 5. **Polish and record** (4 AM to 7 AM): UI polish, deck, runbook recording

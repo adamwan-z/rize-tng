@@ -31,7 +31,7 @@ One screen. Three icons.
 
 > **Reads.** Looks at her TNG transactions and tells her how the business is doing.
 >
-> **Procures.** Plans the order, opens Lotus, hands off for payment.
+> **Procures.** Plans the order. Hands off as a supply list she can act on, or opens Lotus live when she asks for it.
 >
 > **Applies for grants.** Matches her to grants, fills the form, hands off for review.
 

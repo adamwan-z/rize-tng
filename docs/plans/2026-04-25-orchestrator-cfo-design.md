@@ -2,7 +2,7 @@
 
 ## Context
 
-The orchestrator currently exposes five tools: `readSales`, `readStock`, `matchGrants`, `runProcurementAgent`, `runGrantAgent`. The first two are thin pass-throughs to mock-tng. The agent answers narrowly when asked but does not behave like the personal CFO promised in `CONTEXT.md`. With Lane C paused, this design upgrades the orchestrator into a true accountant-grade brain that surfaces cashflow visibility, anticipates problems before they happen, and offers honest advice grounded in measured data, while preserving the grant flow as the live demo hero.
+The orchestrator originally exposed five tools: `readSales`, `readStock`, `matchGrants`, `runProcurementAgent`, `runGrantAgent`. The first two were thin pass-throughs to mock-tng. The agent answered narrowly when asked but did not behave like the personal CFO promised in `CONTEXT.md`. This design upgrades the orchestrator into a true accountant-grade brain that surfaces cashflow visibility, anticipates problems before they happen, and offers honest advice grounded in measured data. The grant flow remains the live demo hero. Lane C has since shipped live browser integration; the orchestrator exposes both `suggestSupplyRun` (default safe handoff) and `runProcurementAgent` (opt-in live Lotus path) as a result.
 
 The change is additive on the agent loop and architecture. All new capability lives in tool handlers, alert thresholds, and prompt rules. No new services, no new patterns.
 
@@ -18,7 +18,7 @@ In:
 - Add six new system prompt rules for empathy, scope discipline, verification, pronoun resolution, language matching, and stock specificity.
 
 Out:
-- Live procurement via Lane C (parked behind a prompt rule).
+- Live procurement via Lane C (now opt-in via prompt rule, default is the supply-list handoff card).
 - Menu profitability, pricing advice, marketing, expansion advice (consultant scope, not accountant).
 - Tax or SST guidance.
 - Forecasting beyond the next week.
@@ -174,7 +174,7 @@ Side effect (yielded mid-execution):
 
 - `matchGrants()`
 - `runGrantAgent(grantId)` (hero flow)
-- `runProcurementAgent(items)` (registered but parked behind a prompt rule)
+- `runProcurementAgent(items)` (Lane C live Lotus path; the prompt routes here only when Mak Cik explicitly opts in)
 
 ## Alert taxonomy and gate
 
@@ -249,7 +249,7 @@ Plus the existing tool inventory, persona, no-em-dashes, no-jargon rules stay.
 
 Plus a tool-specific rule for `analyzeRunway`: only `weeklyInflowRm` and `profitEstimate` are safe to surface. Never quote `weeklyNet`, `runwayWeeks`, `breakevenRevenueRm`, or any monthly cost amount.
 
-Plus a tool-specific rule for `runProcurementAgent`: only call if she explicitly asks for live browser ordering. Otherwise use `suggestSupplyRun`. Drop this rule once Lane C is back.
+Plus a Supply run path rule: default to `suggestSupplyRun` (safe handoff card). Call `runProcurementAgent` only when Mak Cik explicitly says "open Lotus", "order live", "buka cart", or similar. Lane C is shipped, so live procurement is reachable on demand.
 
 Plus alert intent reference (so the LLM knows what each kind means without us coding translations):
 ```
@@ -356,11 +356,10 @@ Memory fix must land first. Without it, the supply-run-after-suggestion flow ("o
 - Tax or SST guidance
 - Forecasting beyond next week
 - Voice or audio output
-- Live procurement via Lane C (until Lane C resumes)
 - Vector DB for grants (rule-based stays)
 - Persistent storage beyond the in-memory session map
 - Real authentication or TNG eWallet integration
-- Lotus cart pre-fill (homepage link only without Lane C)
+- Lotus cart pre-fill (Lane C ships the live browser integration; cart pre-fill is a follow-up if needed)
 
 ## Verification
 

@@ -102,34 +102,22 @@ export type BrowserRunRequest = z.infer<typeof BrowserRunRequest>;
 
 ## Shared agent system prompt
 
-Owned by Lane B. Lives in `apps/orchestrator/src/agent/prompts.ts`.
+Owned by Lane B. Canonical prompt lives in `apps/orchestrator/src/agent/prompts.ts`. See that file for the current text.
 
-```
-You are TNG Rise, a personal CFO agent for Malaysian micro F&B merchants on TNG eWallet.
+Summary of current behaviour (see also `docs/plans/2026-04-25-orchestrator-cfo-design.md` for rationale):
 
-You speak warmly in Bahasa-Inggeris. Mix English and Malay naturally. Use phrases like "boleh", "macam mana", "alamak", "ya". Never be cold or formal. Never use jargon. Never use em dashes.
-
-Your user is Mak Cik, a Nasi Daging Salai stall owner. She trusts you. Be kind. Be specific. Be useful.
-
-You have these tools. Use them. Never make up data.
-
-- readSales(period): get her recent transactions
-- readStock(): get her current stock levels and weekly usage
-- matchGrants(): find Malaysian SME grants she qualifies for
-- runProcurementAgent(items): open Lotus and add ingredients to cart
-- runGrantAgent(grantId): open the grant portal and fill the application
-
-When she asks a question:
-1. Decide which tool(s) to call
-2. After tool returns, summarise the result in 2-3 short Bahasa-Inggeris sentences
-3. Suggest the next action she could take
-
-When you call runGrantAgent, the user will see a live browser viewport. Tell her what you are doing in 1 sentence before each major action.
-
-When a flow ends, hand off cleanly. Tell her what to do next.
-
-Some grants are submitted by email rather than a web form. If matchGrants returns a grant with submissionMethod="email", tell her you will draft the email for her to send. Do not try to open a browser for email-submission grants.
-```
+- **Persona**: TNG Rise, friendly Bahasa-Inggeris accountant for Mak Cik. Never em dashes, never jargon.
+- **Tool inventory** (7 tools):
+  - `analyzeRevenue(period)`: revenue analytics with trend, day-of-week, peak hours, alerts
+  - `analyzeStock()`: stock items with qualitative urgency band ('ok' / 'low' / 'critical') plus alerts
+  - `analyzeRunway()`: cashflow position, profit qualitative band ('comfortable' / 'tight' / 'losing')
+  - `suggestSupplyRun()`: draft shopping list, emits `supply_list` handoff card
+  - `matchGrants()`: rule-based match against the grants KB
+  - `runGrantAgent(grantId)`: hero flow, live browser fill of the application portal
+  - `runProcurementAgent(items)`: live Lotus browser, opt-in only via prompt rule
+- **Behaviour rules**: empathy first, accountant lane only (defer strategy questions), gentle verification, pronoun resolution, language match, tiered stock specificity, supply-run path defaults to `suggestSupplyRun`.
+- **Honesty rules**: qualitative-only for estimated metrics (no day-counts, no monthly cost amounts surfaced). For `analyzeRunway`, only `weeklyInflowRm` and `profitEstimate` are safe to mention.
+- **Threshold-triggered nudges**: tools return language-agnostic alerts (`kind` + `urgency` + `context`); the LLM phrases them in the user's language. Per-session gate prevents repetition.
 
 ---
 
@@ -160,7 +148,7 @@ apps/web/
 │   │   │   ├── MessageList.tsx
 │   │   │   ├── Message.tsx          # Renders text/tool_call/tool_result
 │   │   │   ├── ChatInput.tsx
-│   │   │   └── ToolCallCard.tsx     # Collapsible "agent is using readSales..."
+│   │   │   └── ToolCallCard.tsx     # Collapsible "agent is using analyzeRevenue..."
 │   │   ├── browser/
 │   │   │   └── BrowserViewport.tsx  # Receives browser_step events, shows screenshots
 │   │   ├── handoff/
@@ -268,14 +256,17 @@ apps/orchestrator/
 │   ├── agent/
 │   │   ├── core.ts                  # Tool-use loop
 │   │   ├── prompts.ts               # System prompt
-│   │   ├── memory.ts                # In-memory session store
+│   │   ├── memory.ts                # In-memory session store + alert gate
+│   │   ├── thresholds.ts            # Numeric thresholds for analytical tools
 │   │   └── toolSchemas.ts           # JSON schemas for LLM
 │   ├── tools/
 │   │   ├── registry.ts              # Map tool name → handler
-│   │   ├── readSales.ts
-│   │   ├── readStock.ts
+│   │   ├── analyzeRevenue.ts        # Period revenue + trend + alerts
+│   │   ├── analyzeStock.ts          # Qualitative urgency band per item
+│   │   ├── analyzeRunway.ts         # Cashflow position + profit band
+│   │   ├── suggestSupplyRun.ts      # Draft shopping list, emits supply_list handoff
 │   │   ├── matchGrants.ts           # Reads packages/grants-kb
-│   │   ├── runProcurementAgent.ts   # Calls services/browser-agent
+│   │   ├── runProcurementAgent.ts   # Live Lotus browser (opt-in path)
 │   │   └── runGrantAgent.ts
 │   ├── llm/
 │   │   ├── client.ts                # LLMClient interface
@@ -292,14 +283,17 @@ apps/orchestrator/
 
 ## Acceptance criteria
 
-- [ ] `POST /chat` accepts `ChatRequest`, returns SSE stream of `AgentEvent`s
-- [ ] LLM tool-use loop terminates correctly on `done` and on errors
-- [ ] All five tools registered and callable by the LLM
-- [ ] `LLM_PROVIDER` env var swaps Anthropic and Bedrock without code changes
-- [ ] Tool call errors surface as `error` events, never crash the server
-- [ ] System prompt loaded from `prompts.ts`
-- [ ] `matchGrants` returns at least 2 grants for Mak Cik with eligibility reasoning
-- [ ] Demo runbook steps 1, 2, 4, 5 work end-to-end with the real LLM
+- [x] `POST /chat` accepts `ChatRequest`, returns SSE stream of `AgentEvent`s
+- [x] LLM tool-use loop terminates correctly on `done` and on errors
+- [x] All seven tools registered and callable by the LLM (`analyzeRevenue`, `analyzeStock`, `analyzeRunway`, `suggestSupplyRun`, `matchGrants`, `runGrantAgent`, `runProcurementAgent`)
+- [x] `LLM_PROVIDER` env var swaps Anthropic and Bedrock without code changes
+- [x] Tool call errors surface as `error` events, never crash the server
+- [x] System prompt loaded from `prompts.ts`
+- [x] `matchGrants` returns at least 2 grants for Mak Cik with eligibility reasoning
+- [x] Multi-turn memory: full `LLMMessage[]` (incl. tool_use / tool_result blocks) persisted per session
+- [x] Per-session alert gate so threshold-triggered nudges do not repeat
+- [x] Qualitative-only honesty rules for estimated metrics (no day-counts, no monthly cost amounts surfaced)
+- [ ] Demo runbook steps 1, 2, 4, 5 work end-to-end with the real LLM (pending live verification with `ANTHROPIC_API_KEY`)
 
 ## LLM client interface
 

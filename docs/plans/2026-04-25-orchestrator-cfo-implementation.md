@@ -1385,7 +1385,7 @@ If any step fails, open a follow-up task in chat with the specific failure (whic
 - Lane A `SupplyListHandoff.tsx` component (Lane A's task; the handoff event is already emitted)
 - Lane A starter chips (Lane A's task)
 - Lane D `pitch/deck.md` and `pitch/demo-runbook.md` updates
-- Lane C live browser cart pre-fill
+- Lane C cart pre-fill on Lotus (Lane C has shipped browser integration; pre-fill is a follow-up if useful)
 - Voice or audio output
 - Persistent storage beyond in-memory session map
 - Any vector DB or RAG layer
