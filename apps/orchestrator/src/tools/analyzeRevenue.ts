@@ -49,10 +49,25 @@ export const analyzeRevenue: ToolHandler = async function* (input, ctx) {
     });
   }
   if (period === 'today') {
-    const todayDow = DOW[new Date().getDay()]!;
-    const dowAvgPriorWeeks = byDayOfWeek[todayDow]!.totalRm; // simple proxy from this period
-    if (total > 0 && dowAvgPriorWeeks > 0 && total < dowAvgPriorWeeks * (1 - THRESHOLDS.unusualQuietDayPct)) {
-      raw.push({ alert: { kind: 'unusual_quiet_day', urgency: 'warn' }, dedupeKey: '' });
+    // Real per-day-of-week baseline: average revenue on this DOW across the
+    // prior 28 days, excluding today itself. Without this we would compare
+    // today's total against today's total and never fire the alert.
+    const todayDow = new Date().getDay();
+    const todayDateKey = new Date().toISOString().slice(0, 10);
+    const baseline = await fetchTx(28);
+    const dailyTotals = new Map<string, number>();
+    for (const tx of baseline) {
+      if (new Date(tx.timestamp).getDay() !== todayDow) continue;
+      const dateKey = tx.timestamp.slice(0, 10);
+      if (dateKey === todayDateKey) continue;
+      dailyTotals.set(dateKey, (dailyTotals.get(dateKey) ?? 0) + tx.amountRm);
+    }
+    const priorDowDays = Array.from(dailyTotals.values());
+    if (priorDowDays.length > 0) {
+      const dowAvg = priorDowDays.reduce((s, v) => s + v, 0) / priorDowDays.length;
+      if (total > 0 && dowAvg > 0 && total < dowAvg * (1 - THRESHOLDS.unusualQuietDayPct)) {
+        raw.push({ alert: { kind: 'unusual_quiet_day', urgency: 'warn' }, dedupeKey: '' });
+      }
     }
   }
   for (const tx of txs) {
