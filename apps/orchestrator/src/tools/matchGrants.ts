@@ -31,25 +31,13 @@ export const matchGrants: ToolHandler = async function* () {
 
 function explainEligibility(grant: Grant, profile: MerchantProfile): string[] {
   const reasons: string[] = [];
-  const monthlyRm = profile.monthlyRevenueRm;
+  const annualRm = profile.monthlyRevenueRm * 12;
 
-  // Heuristic eligibility narrative. Lane B can refine these as the demo evolves.
-  if (grant.id === 'tekun-mikro' && monthlyRm < 8000 * 4) {
-    reasons.push('Pendapatan bulanan dalam had TEKUN');
-    reasons.push('Perniagaan F&B aktif di Malaysia');
-  }
-  if (grant.id === 'mara-spgb') {
-    reasons.push('Bumiputera, perniagaan F&B di Kuala Lumpur');
-  }
-  if (grant.id === 'teraju-bumiputera' && monthlyRm * 12 >= 100_000) {
-    reasons.push('Pendapatan tahunan memenuhi syarat TERAJU');
-  }
-  if (grant.id === 'bnm-iaes') {
-    reasons.push('Perniagaan F&B aktif lebih 1 tahun');
-    reasons.push('Pendapatan dalam julat sasaran iAES');
-  }
-  if (grant.id === 'aim-ikhtiar' && monthlyRm < 5000 * 2) {
-    reasons.push('Layak untuk skim AIM jika pendapatan isi rumah rendah');
+  if (grant.id === 'sme-growth-fund') {
+    reasons.push('Perniagaan F&B berdaftar SSM, aktif di Malaysia');
+    if (annualRm < 500_000) {
+      reasons.push('Pendapatan tahunan dalam had SME Growth Fund');
+    }
   }
   return reasons;
 }

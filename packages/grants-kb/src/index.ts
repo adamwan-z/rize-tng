@@ -1,11 +1,7 @@
 import { Grant } from '@tng-rise/shared';
-import tekunMikro from '../data/tekun-mikro.json' with { type: 'json' };
-import maraSpgb from '../data/mara-spgb.json' with { type: 'json' };
-import terajuBumiputera from '../data/teraju-bumiputera.json' with { type: 'json' };
-import bnmIaes from '../data/bnm-iaes.json' with { type: 'json' };
-import aimIkhtiar from '../data/aim-ikhtiar.json' with { type: 'json' };
+import smeGrowthFund from '../data/sme-growth-fund.json' with { type: 'json' };
 
-const raw: unknown[] = [tekunMikro, maraSpgb, terajuBumiputera, bnmIaes, aimIkhtiar];
+const raw: unknown[] = [smeGrowthFund];
 
 // Validate at module load time. If a grant JSON drifts from the schema, the
 // orchestrator fails fast on startup rather than during a live demo.

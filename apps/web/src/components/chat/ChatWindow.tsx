@@ -28,6 +28,19 @@ export function ChatWindow({ sessionId }: { sessionId: string }) {
     [send],
   );
 
+  // The grant shortcut is a button, not a typed message. Skip the user bubble
+  // and go straight to the agent's reply so the chat reads as a one-tap action.
+  const sendSilent = useCallback(
+    async (message: string) => {
+      setItems((prev) => [
+        ...prev,
+        { kind: 'agent_text', id: crypto.randomUUID(), text: '' },
+      ]);
+      await send(message);
+    },
+    [send],
+  );
+
   // Unlock the grant shortcut once the merchant has actually completed a Lotus
   // checkout. Sticky for the rest of the session so it reads as "next step
   // unlocked" rather than a fleeting toast.
@@ -44,8 +57,8 @@ export function ChatWindow({ sessionId }: { sessionId: string }) {
   );
 
   const onGrantClick = useCallback(() => {
-    void onSubmit('business grant');
-  }, [onSubmit]);
+    void sendSilent('business grant');
+  }, [sendSilent]);
 
   return (
     <div className="h-full flex flex-col max-w-3xl mx-auto px-4">

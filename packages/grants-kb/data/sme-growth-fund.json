@@ -1,0 +1,15 @@
+{
+  "id": "sme-growth-fund",
+  "name": "SME Growth Fund 2026",
+  "agency": "SME Corp Malaysia",
+  "description": "Geran tunai sehingga RM 50,000 untuk SME Malaysia yang nak kembangkan operasi: tambah staf, beli kelengkapan dapur, atau bina branding.",
+  "maxAmountRm": 50000,
+  "eligibility": [
+    "Perniagaan berdaftar di Malaysia (SSM)",
+    "Beroperasi sekurang-kurangnya 6 bulan",
+    "Pendapatan tahunan di bawah RM 500,000",
+    "Sektor F&B, retail, atau perkhidmatan layak memohon"
+  ],
+  "submissionMethod": "web_form",
+  "applicationUrl": "http://localhost:5050/grant.html"
+}
