@@ -14,6 +14,12 @@ export const analyzeRevenue: ToolHandler = async function* (input, ctx) {
   const count = txs.length;
   const avgTicket = count > 0 ? total / count : 0;
 
+  // Always-7-day rolling tail for the UI sparkline. Fetched even when the
+  // requested period is shorter (today/1d) so the card has real bar heights
+  // instead of zero-padded flats.
+  const sparkSource = days >= 7 ? txs : await fetchTx(7);
+  const dailyInflowRm = bucketByDay(sparkSource, 7).map((n) => round(n));
+
   // Trend: compare with the immediately prior window of the same length.
   const prior = days > 1 ? await fetchTx(days * 2) : [];
   const priorOnly = prior.slice(0, prior.length - txs.length);
@@ -90,9 +96,23 @@ export const analyzeRevenue: ToolHandler = async function* (input, ctx) {
     trendVsPriorPct: round(trendVsPriorPct, 4),
     byDayOfWeek,
     peakHours,
+    dailyInflowRm,
     alerts,
   };
 };
+
+// Buckets transactions into the most-recent N daily totals, oldest first.
+// Pads with 0 when a day has no transactions so the series is always length N.
+function bucketByDay(txs: Transaction[], n: number): number[] {
+  const totals = new Map<string, number>();
+  for (const tx of txs) {
+    const day = tx.timestamp.slice(0, 10);
+    totals.set(day, (totals.get(day) ?? 0) + tx.amountRm);
+  }
+  const sorted = [...totals.keys()].sort();
+  const recent = sorted.slice(-n).map((d) => totals.get(d) ?? 0);
+  return recent.length >= n ? recent : [...Array(n - recent.length).fill(0), ...recent];
+}
 
 async function fetchTx(days: number): Promise<Transaction[]> {
   const res = await fetch(`${env.MOCK_TNG_URL}/transactions?days=${days}`);
