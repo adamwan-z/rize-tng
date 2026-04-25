@@ -44,6 +44,7 @@ export function ChatInput({
         />
         <button
           type="submit"
+          aria-label="Hantar mesej"
           disabled={disabled || !hasText}
           className={clsx(
             'rounded-xl w-11 h-11 flex items-center justify-center transition',
