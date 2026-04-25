@@ -6,34 +6,46 @@ export function EmailHandoff({ payload }: { payload: Record<string, unknown> }) 
   const body = (payload.body as string | undefined) ?? '';
   const grantName = (payload.grantName as string | undefined) ?? 'Grant';
 
-  const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  const mailto = `mailto:${encodeURIComponent(to)}?subject=${encodeURIComponent(
+    subject,
+  )}&body=${encodeURIComponent(body)}`;
 
   return (
-    <div className="rounded-xl border-2 border-emerald-500 bg-emerald-50 p-4">
-      <div className="flex items-center gap-2 mb-2 text-emerald-700">
+    <div
+      className="rounded-2xl p-5 border-l-4"
+      style={{
+        background: 'rgba(0, 132, 67, 0.06)',
+        borderLeftColor: 'var(--tng-green)',
+      }}
+    >
+      <div className="flex items-center gap-2 mb-2 text-tng-green">
         <Mail className="w-4 h-4" />
-        <span className="font-semibold">Email draf siap</span>
+        <span className="font-display font-semibold text-[15px]">Email draf siap</span>
       </div>
-      <p className="text-sm text-emerald-900 mb-3">
-        {grantName} ni dihantar melalui emel. Saya dah draf untuk Mak Cik. Sila semak dan hantar dari mailbox sendiri.
+      <p className="text-sm text-ink-900 mb-3 leading-relaxed">
+        {grantName} ni dihantar melalui emel. Saya dah draf untuk Mak Cik. Sila
+        semak dan hantar dari mailbox sendiri.
       </p>
       <details className="mb-3 text-xs">
-        <summary className="cursor-pointer text-emerald-700">Tengok preview</summary>
-        <div className="mt-2 space-y-1 text-emerald-900">
+        <summary className="cursor-pointer text-tng-green font-mono uppercase tracking-wider">
+          Tengok preview
+        </summary>
+        <div className="mt-2 space-y-1 text-ink-900">
           <div>
-            <span className="font-mono text-[10px] uppercase text-emerald-600">to</span> {to}
+            <span className="font-mono text-[10px] uppercase text-ink-500">to</span> {to}
           </div>
           <div>
-            <span className="font-mono text-[10px] uppercase text-emerald-600">subject</span> {subject}
+            <span className="font-mono text-[10px] uppercase text-ink-500">subject</span>{' '}
+            {subject}
           </div>
-          <pre className="whitespace-pre-wrap font-sans bg-white border border-emerald-200 rounded p-2 mt-1">
+          <pre className="whitespace-pre-wrap font-body bg-surface-1 border border-surface-2 rounded p-2 mt-1">
             {body}
           </pre>
         </div>
       </details>
       <a
         href={mailto}
-        className="inline-block rounded-lg bg-emerald-600 px-4 py-2 text-white text-sm font-medium hover:bg-emerald-700"
+        className="inline-block rounded-lg bg-tng-green px-4 py-2 text-white text-sm font-display font-semibold hover:bg-tng-green/90"
       >
         Buka mail client
       </a>

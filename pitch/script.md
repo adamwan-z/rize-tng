@@ -51,3 +51,4 @@ Pause. Smile. Take questions.
 - "What if the portal changes?" → recordings in `recordings/` plus selectors with `last_verified` dates.
 - "Is this real TNG integration?" → mock today, partnership conversation tomorrow.
 - "What about privacy?" → no auth in the demo, real version uses TNG eWallet's existing auth.
+- "What about other languages?" → today is Bahasa-Inggeris, the register most KL Malay merchants speak. v2 ships Mandarin and Tamil. The voice is one prompt swap, the UI has three strings to localise.

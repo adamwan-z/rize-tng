@@ -63,6 +63,7 @@ Stats from `pitch/stats.md`:
 
 - WhatsApp interface (her real channel)
 - Voice input (Malay)
+- Mandarin and Tamil chat surfaces. Today's voice is EN+MS code-switched, the register Malay merchants speak natively. v2 covers the next two largest merchant communities.
 - Real TNG eWallet integration via TNG Digital partnership
 - Coverage to 5+ states by end-of-year
 

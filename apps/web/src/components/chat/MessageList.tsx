@@ -3,6 +3,7 @@ import { Message } from './Message.js';
 import { ToolCallCard } from './ToolCallCard.js';
 import { BrowserViewport } from '../browser/BrowserViewport.js';
 import { HandoffCard } from '../handoff/HandoffCard.js';
+import { dispatchAgentCard } from '../agent/dispatchAgentCard.js';
 
 export type ChatItem =
   | { kind: 'user'; id: string; text: string }
@@ -24,7 +25,7 @@ export type ChatItem =
   | {
       kind: 'handoff';
       id: string;
-      handoffKind: 'payment' | 'review_submit' | 'email' | 'supply_list';
+      handoffKind: 'payment' | 'review_submit' | 'email' | 'decline' | 'supply_list';
       payload: Record<string, unknown>;
     }
   | { kind: 'error'; id: string; message: string };
@@ -44,7 +45,14 @@ export function MessageList({ items, streaming }: { items: ChatItem[]; streaming
             return <Message key={item.id} role="user" text={item.text} />;
           case 'agent_text':
             return <Message key={item.id} role="agent" text={item.text} streaming={streaming} />;
-          case 'tool_call':
+          case 'tool_call': {
+            const rich = dispatchAgentCard({
+              toolName: item.name,
+              input: item.input,
+              result: item.result,
+              status: item.status,
+            });
+            if (rich) return <div key={item.id}>{rich}</div>;
             return (
               <ToolCallCard
                 key={item.id}
@@ -54,6 +62,7 @@ export function MessageList({ items, streaming }: { items: ChatItem[]; streaming
                 result={item.result}
               />
             );
+          }
           case 'browser_run':
             return <BrowserViewport key={item.id} runId={item.runId} steps={item.steps} />;
           case 'handoff':
@@ -62,9 +71,13 @@ export function MessageList({ items, streaming }: { items: ChatItem[]; streaming
             return (
               <div
                 key={item.id}
-                className="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+                role="alert"
+                aria-live="assertive"
+                className="rounded-2xl p-4 border border-tng-pink/30 text-tng-pink text-sm leading-relaxed"
+                style={{ background: 'rgba(239, 78, 116, 0.06)' }}
               >
-                Alamak, ada masalah: {item.message}
+                <span className="font-display font-semibold mr-2">Alamak,</span>
+                {item.message}
               </div>
             );
         }

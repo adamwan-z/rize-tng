@@ -1,0 +1,42 @@
+/* TNG Rise · canonical tokens · paste at app root */
+:root {
+  /* TNG anchor */
+  --tng-blue: #005BAA;
+  --tng-blue-dark: #003D75;
+  --tng-blue-deep: #002A52;
+  --tng-blue-300: #7FAFD8;
+  --tng-blue-200: #B8D2EA;
+  --tng-blue-100: #E5EFF8;
+  --tng-yellow: #FFF200;
+  --tng-yellow-deep: #F5C400;
+
+  /* Semantic (TNG-named, design system convention) */
+  --tng-green: #008443;
+  --tng-orange: #EB8705;
+  --tng-pink: #EF4E74;
+  --tng-warm-grey: #726658;
+
+  /* Editorial accent */
+  --rise-accent: #FF6B35;
+
+  /* Surfaces */
+  --surface-0: #FAFAF7;
+  --surface-1: #FFFFFF;
+  --surface-2: #F2F1EC;
+  --surface-3: #E5E4DD;
+
+  /* Ink */
+  --ink-900: #1A1A1A;
+  --ink-700: #3D3D3D;
+  --ink-500: #6E6E6E;
+  --ink-300: #A5A5A0;
+
+  /* Type stacks */
+  --font-display:   'Sora', system-ui, -apple-system, sans-serif;
+  --font-body:      'Open Sans', system-ui, -apple-system, sans-serif;
+  --font-mono:      'JetBrains Mono', ui-monospace, monospace;
+  --font-editorial: 'Fraunces', Georgia, serif;
+
+  /* CTA shadow (yellow CTA gets the deeper yellow underneath) */
+  --cta-shadow: 0 4px 0 var(--tng-yellow-deep);
+}

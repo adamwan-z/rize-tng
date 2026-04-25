@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type KeyboardEvent } from 'react';
 import { Send } from 'lucide-react';
+import clsx from 'clsx';
 
 export function ChatInput({
   onSubmit,
@@ -9,6 +10,7 @@ export function ChatInput({
   disabled?: boolean;
 }) {
   const [value, setValue] = useState('');
+  const hasText = value.trim().length > 0;
 
   function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -26,7 +28,10 @@ export function ChatInput({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="border-t border-neutral-200 bg-white py-3">
+    <form
+      onSubmit={handleSubmit}
+      className="border-t border-surface-2 bg-surface-1 py-3 sticky bottom-0"
+    >
       <div className="flex gap-2 items-end">
         <textarea
           value={value}
@@ -35,12 +40,18 @@ export function ChatInput({
           rows={1}
           disabled={disabled}
           placeholder="Tanya apa-apa, contoh: macam mana business hari ni?"
-          className="flex-1 resize-none rounded-xl border border-neutral-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-tng-500 disabled:bg-neutral-100"
+          className="flex-1 resize-none rounded-xl border border-surface-2 px-3 py-2.5 text-[15px] font-body bg-surface-1 text-ink-900 placeholder:text-ink-300 focus:outline-none focus:ring-4 focus:ring-tng-blue/15 focus:border-tng-blue disabled:bg-surface-2"
         />
         <button
           type="submit"
-          disabled={disabled || !value.trim()}
-          className="rounded-xl bg-tng-500 px-4 py-2 text-white hover:bg-tng-600 disabled:bg-neutral-300 disabled:cursor-not-allowed"
+          aria-label="Hantar mesej"
+          disabled={disabled || !hasText}
+          className={clsx(
+            'rounded-xl w-11 h-11 flex items-center justify-center transition',
+            hasText
+              ? 'bg-tng-blue hover:bg-tng-blue-dark text-white'
+              : 'bg-surface-2 text-ink-300 cursor-not-allowed',
+          )}
         >
           <Send className="w-4 h-4" />
         </button>

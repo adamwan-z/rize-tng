@@ -1,26 +1,30 @@
 import { useMemo } from 'react';
 import { ChatWindow } from './components/chat/ChatWindow.js';
+import { TngBar } from './components/brand/TngBar.js';
+import { RiseMark } from './components/brand/RiseMark.js';
 
 export function App() {
-  // One screen, one session per page load. Hackathon scope.
   const sessionId = useMemo(() => crypto.randomUUID(), []);
-
   return (
-    <div className="h-full flex flex-col bg-neutral-50">
-      <header className="border-b border-neutral-200 bg-white">
-        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-tng-500 flex items-center justify-center text-white font-bold">
-            R
-          </div>
-          <div>
-            <div className="font-semibold text-neutral-900">TNG Rise</div>
-            <div className="text-xs text-neutral-500">CFO untuk usahawan kecil</div>
-          </div>
+    <div className="h-full flex flex-col bg-surface-0">
+      <TngBar />
+      <header className="border-b border-surface-2 bg-surface-1">
+        <div className="max-w-3xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+          <RiseMark />
+          <span
+            role="status"
+            aria-label="Connection status: online"
+            className="hidden sm:inline-flex items-center gap-2 px-2 py-1 rounded-full bg-tng-green/10 text-tng-green text-[10px] font-mono font-semibold uppercase tracking-widest"
+          >
+            <span aria-hidden className="w-1.5 h-1.5 rounded-full bg-tng-green" />
+            Online
+          </span>
         </div>
       </header>
       <main className="flex-1 overflow-hidden">
         <ChatWindow sessionId={sessionId} />
       </main>
+      <TngBar thin />
     </div>
   );
 }
