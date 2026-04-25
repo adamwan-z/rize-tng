@@ -1,0 +1,15 @@
+# Local state contains secrets in plaintext. Never commit.
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Provider plugins
+.terraform/
+
+# Real values (use terraform.tfvars.example as template)
+terraform.tfvars
+*.auto.tfvars
+
+# Crash logs
+crash.log
+crash.*.log

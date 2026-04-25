@@ -1,0 +1,19 @@
+# Copy to terraform.tfvars and fill in real values.
+# terraform.tfvars is gitignored.
+
+# Find your laptop IP: curl https://api.ipify.org
+admin_ip_cidr = "203.0.113.42/32"
+
+# Contents of your SSH public key
+ssh_public_key = "ssh-ed25519 AAAAC3Nza... you@laptop"
+
+# Browser-agent secrets
+dashscope_api_key = "sk-..."
+anthropic_api_key = "sk-ant-..."
+
+# Optional: lock browser-agent :5001 to your AWS orchestrator's EIP
+# orchestrator_ip_cidr = "52.0.0.0/32"
+
+# Optional: bump if you have specific bucket name preferences
+# screenshots_bucket = "tng-rise-screenshots"
+# web_bucket         = "tng-rise-web"

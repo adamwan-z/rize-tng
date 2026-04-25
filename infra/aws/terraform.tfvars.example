@@ -1,0 +1,18 @@
+# Copy to terraform.tfvars and fill in real values.
+# terraform.tfvars is gitignored.
+
+admin_ip_cidr  = "192.228.139.12/32"
+ssh_public_key = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5... you@laptop"
+
+# Hackathon STS credentials. Get fresh from the hackathon AWS console.
+# These get baked into the orchestrator container; refresh via
+# infra/aws/refresh-orchestrator-creds.sh on the box when they expire.
+aws_access_key_id     = "ASIA..."
+aws_secret_access_key = "..."
+aws_session_token     = "..."
+
+# Optional: confirm in Bedrock console that this exact model id is available
+# bedrock_model_id = "anthropic.claude-sonnet-4-6"
+
+# Optional: override if you redeploy the Alibaba browser-agent to a different IP
+# browser_agent_url = "http://47.250.172.167:5001"

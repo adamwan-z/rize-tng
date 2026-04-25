@@ -1,0 +1,15 @@
+# Local state contains secrets
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Provider plugins
+.terraform/
+
+# Real values
+terraform.tfvars
+*.auto.tfvars
+
+# Crash logs
+crash.log
+crash.*.log
