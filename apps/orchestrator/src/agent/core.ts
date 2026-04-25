@@ -1,10 +1,10 @@
-import type { AgentEvent } from '@tng-rise/shared';
+import type { AgentEvent, Alert } from '@tng-rise/shared';
 import { getLLM } from '../llm/index.js';
-import type { LLMContentBlock, LLMMessage } from '../llm/client.js';
+import type { LLMContentBlock, LLMMessage, LLMTool } from '../llm/client.js';
 import { TOOL_SCHEMAS } from './toolSchemas.js';
 import { SYSTEM_PROMPT } from './prompts.js';
 import { tools, hasTool } from '../tools/registry.js';
-import { appendTurn, getHistory } from './memory.js';
+import { getSession, setMessages, alertAlreadyFired, markAlertFired } from './memory.js';
 
 const MAX_TURNS = 6;
 
@@ -16,12 +16,18 @@ export async function* runAgent(input: {
   userMessage: string;
 }): AsyncGenerator<AgentEvent, void, void> {
   const llm = getLLM();
-  appendTurn(input.sessionId, { role: 'user', content: input.userMessage });
+  const session = getSession(input.sessionId);
+  const messages: LLMMessage[] = [
+    ...session.messages,
+    { role: 'user', content: input.userMessage },
+  ];
 
-  const messages: LLMMessage[] = getHistory(input.sessionId).map((t) => ({
-    role: t.role,
-    content: t.content,
-  }));
+  const alertGate = (alert: Alert, dedupeKey: string): boolean => {
+    const key = `${alert.kind}:${dedupeKey}`;
+    if (alertAlreadyFired(input.sessionId, key)) return false;
+    markAlertFired(input.sessionId, key);
+    return true;
+  };
 
   for (let turn = 0; turn < MAX_TURNS; turn++) {
     const toolUses: Array<{ id: string; name: string; input: unknown }> = [];
@@ -31,7 +37,7 @@ export async function* runAgent(input: {
       for await (const event of llm.stream({
         system: SYSTEM_PROMPT,
         messages,
-        tools: TOOL_SCHEMAS as unknown as typeof TOOL_SCHEMAS,
+        tools: TOOL_SCHEMAS as unknown as LLMTool[],
       })) {
         if (event.type === 'text_delta') {
           assistantText += event.text;
@@ -52,10 +58,13 @@ export async function* runAgent(input: {
     }
 
     if (toolUses.length === 0) {
-      // No tool calls means the model finished. Persist assistant turn and exit.
+      // No tool calls means the model finished. Persist the full message array
+      // (including all tool_use/tool_result blocks built up across sub-turns)
+      // so the next user turn has full context.
       if (assistantText) {
-        appendTurn(input.sessionId, { role: 'assistant', content: assistantText });
+        messages.push({ role: 'assistant', content: assistantText });
       }
+      setMessages(input.sessionId, messages);
       yield { type: 'done' };
       return;
     }
@@ -94,6 +103,7 @@ export async function* runAgent(input: {
         const handler = tools[tu.name]!;
         const generator = handler(tu.input as Record<string, unknown>, {
           sessionId: input.sessionId,
+          alertGate,
         });
         let result: unknown = null;
         while (true) {
