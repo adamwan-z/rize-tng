@@ -3,15 +3,10 @@ import type { AgentEvent } from '@tng-rise/shared';
 import { useAgentStream } from '../../hooks/useAgentStream.js';
 import { MessageList, type ChatItem } from './MessageList.js';
 import { ChatInput } from './ChatInput.js';
+import { Greeting } from './Greeting.js';
 
 export function ChatWindow({ sessionId }: { sessionId: string }) {
-  const [items, setItems] = useState<ChatItem[]>([
-    {
-      kind: 'agent_text',
-      id: 'greeting',
-      text: 'Hai Mak Cik! Saya Rise, CFO digital Mak Cik. Boleh tanya saya pasal jualan, stok, atau grant.',
-    },
-  ]);
+  const [items, setItems] = useState<ChatItem[]>([]);
 
   const onEvent = useCallback((event: AgentEvent) => {
     setItems((prev) => mergeEvent(prev, event));
@@ -33,6 +28,9 @@ export function ChatWindow({ sessionId }: { sessionId: string }) {
 
   return (
     <div className="h-full flex flex-col max-w-3xl mx-auto px-4">
+      <div className="pt-6">
+        <Greeting />
+      </div>
       <MessageList items={items} streaming={status === 'streaming'} />
       <ChatInput onSubmit={onSubmit} disabled={status === 'streaming'} />
     </div>

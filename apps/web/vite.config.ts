@@ -9,6 +9,11 @@ export default defineConfig({
       // Proxy API to the orchestrator. Avoids CORS plus keeps demo origins clean.
       '/chat': { target: 'http://localhost:4000', changeOrigin: true },
       '/health': { target: 'http://localhost:4000', changeOrigin: true },
+      '/api/merchant': {
+        target: 'http://localhost:5000',
+        rewrite: (p) => p.replace(/^\/api/, ''),
+        changeOrigin: true,
+      },
     },
   },
 });
