@@ -22,12 +22,3 @@ export function formatPercent(value: number): string {
   const fixed = Number.isInteger(value) ? value : value.toFixed(1);
   return `${sign}${fixed}%`;
 }
-
-// Splits an array of numbers into bar heights normalized to 0..1.
-// normalizeForSparkline([1, 2, 3, 4]) => [0.25, 0.5, 0.75, 1]
-export function normalizeForSparkline(values: number[]): number[] {
-  if (values.length === 0) return [];
-  const max = Math.max(...values);
-  if (max === 0) return values.map(() => 0);
-  return values.map((v) => v / max);
-}

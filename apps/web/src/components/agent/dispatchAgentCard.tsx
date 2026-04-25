@@ -1,7 +1,7 @@
 import { GrantMatchedCard } from './GrantMatchedCard.js';
 import { ProcurementCard } from './ProcurementCard.js';
 import { RevenueCard } from './RevenueCard.js';
-import { normalizeForSparkline } from '../../lib/format.js';
+import { RunwayCard, type ProfitBand } from './RunwayCard.js';
 
 type DispatchInput = {
   toolName: string;
@@ -13,10 +13,31 @@ type DispatchInput = {
 // Returns null when no rich card is available. MessageList falls back to
 // ToolCallCard's JSON view in that case.
 export function dispatchAgentCard({ toolName, input, result, status }: DispatchInput) {
-  if (toolName === 'readSales' && status === 'done') return renderRevenue(result);
+  if (toolName === 'analyzeRevenue' && status === 'done') return renderRevenue(result);
+  if (toolName === 'analyzeRunway' && status === 'done') return renderRunway(result);
   if (toolName === 'matchGrants' && status === 'done') return renderGrants(result);
   if (toolName === 'runProcurementAgent') return renderProcurement(input, status);
   return null;
+}
+
+function renderRunway(raw: unknown) {
+  const r = raw as {
+    weeklyInflowRm: number;
+    weeklyFixedCostRm: number;
+    weeklySupplyCostRm: number;
+    weeklyNetRm: number;
+    profitEstimate: ProfitBand;
+  } | null;
+  if (!r || typeof r.weeklyInflowRm !== 'number') return null;
+  return (
+    <RunwayCard
+      weeklyInflowRm={r.weeklyInflowRm}
+      weeklyFixedCostRm={r.weeklyFixedCostRm}
+      weeklySupplyCostRm={r.weeklySupplyCostRm}
+      weeklyNetRm={r.weeklyNetRm}
+      profitEstimate={r.profitEstimate}
+    />
+  );
 }
 
 function renderRevenue(raw: unknown) {
@@ -25,30 +46,27 @@ function renderRevenue(raw: unknown) {
     totalRm: number;
     count: number;
     avgTicketRm: number;
-    transactions: Array<{ timestamp: string; amountRm: number }>;
+    dailyInflowRm?: number[];
   } | null;
   if (!r || typeof r.totalRm !== 'number') return null;
 
-  // Bucket transactions by day so the sparkline always shows 7 bars even when
-  // the user asked for a longer or shorter window.
-  const byDay = new Map<string, number>();
-  for (const tx of r.transactions ?? []) {
-    const day = tx.timestamp.slice(0, 10);
-    byDay.set(day, (byDay.get(day) ?? 0) + tx.amountRm);
-  }
-  const days = [...byDay.keys()].sort();
-  const recent = days.slice(-7).map((d) => byDay.get(d) ?? 0);
-  const series = normalizeForSparkline(
-    recent.length === 7 ? recent : padLeft(recent, 7, 0),
-  );
+  const recent = Array.isArray(r.dailyInflowRm) ? r.dailyInflowRm : [];
+  const padded = recent.length === 7 ? [...recent] : padLeft(recent, 7, 0);
 
-  const todayRm = recent[recent.length - 1] ?? r.totalRm;
-  const yesterdayRm = recent[recent.length - 2] ?? todayRm;
-
-  // Period-aware framing so the card never says "Today" for a 7d/30d query.
   if (r.period === 'today') {
+    // Force the rightmost bar to match the headline. The orchestrator fetches
+    // the 7-day series and the 1-day total separately; mock-tng's deterministic
+    // seed can return slightly different numbers between the two fetches, and
+    // the bar must agree with the big number.
+    padded[6] = r.totalRm;
+    const todayRm = r.totalRm;
+    const yesterdayRm = padded[5] ?? 0;
+    // Only show the delta pill when both days have real revenue. Otherwise
+    // we'd surface a meaningless "0%" or compare today against zero.
     const deltaPercent =
-      yesterdayRm > 0 ? ((todayRm - yesterdayRm) / yesterdayRm) * 100 : undefined;
+      yesterdayRm > 0 && todayRm > 0
+        ? ((todayRm - yesterdayRm) / yesterdayRm) * 100
+        : undefined;
     return (
       <RevenueCard
         eyebrow="Today · Kampung Baru"
@@ -58,13 +76,11 @@ function renderRevenue(raw: unknown) {
           comparedTo: 'yesterday',
         })}
         orderCount={r.count}
-        series={series}
+        dailyInflowRm={padded}
       />
     );
   }
 
-  // 7d / 30d: show the cumulative total. Skip the delta pill because we have
-  // no prior-period total to compare against.
   const eyebrow =
     r.period === '7d'
       ? 'Last 7 days · Kampung Baru'
@@ -74,7 +90,7 @@ function renderRevenue(raw: unknown) {
       eyebrow={eyebrow}
       totalRm={Number(r.totalRm.toFixed(2))}
       orderCount={r.count}
-      series={series}
+      dailyInflowRm={padded}
     />
   );
 }
