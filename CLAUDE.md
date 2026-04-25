@@ -114,14 +114,20 @@ Each lane has a folder. Do not write code outside your lane. If you need a contr
 ## Commands
 
 ```bash
-# Run everything
-docker compose up
+# Boot all 3 TS services in one terminal (mock-tng + orchestrator + web)
+npm run dev
 
-# Run one service in dev
-cd apps/web && npm run dev                    # :3000
-cd apps/orchestrator && npm run dev           # :4000
-cd services/browser-agent && uv run python -m src.server   # :5001
-cd services/mock-tng && npm run dev           # :5050
+# Same plus the Python browser-agent (requires uv + playwright installed)
+npm run dev:full
+
+# Or boot each individually
+npm run dev:mock-tng        # :5050
+npm run dev:orchestrator    # :4000
+npm run dev:web             # :3000
+npm run dev:browser-agent   # :5001
+
+# Production-style path (Docker images)
+docker compose up
 
 # Type check shared contracts
 cd packages/shared && npm run typecheck

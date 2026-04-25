@@ -9,9 +9,12 @@
     "services/mock-tng"
   ],
   "scripts": {
+    "dev": "concurrently --names 'mock,orch,web' --prefix-colors 'yellow,green,cyan' --kill-others-on-fail 'npm:dev:mock-tng' 'npm:dev:orchestrator' 'npm:dev:web'",
+    "dev:full": "concurrently --names 'mock,orch,web,browser' --prefix-colors 'yellow,green,cyan,magenta' --kill-others-on-fail 'npm:dev:mock-tng' 'npm:dev:orchestrator' 'npm:dev:web' 'cd services/browser-agent && uv run python -m src.server'",
     "dev:web": "npm run dev --workspace apps/web",
     "dev:orchestrator": "npm run dev --workspace apps/orchestrator",
     "dev:mock-tng": "npm run dev --workspace services/mock-tng",
+    "dev:browser-agent": "cd services/browser-agent && uv run python -m src.server",
     "typecheck": "npm run typecheck --workspaces --if-present",
     "build": "npm run build --workspaces --if-present",
     "compose:up": "docker compose up --build",
@@ -21,6 +24,7 @@
     "node": ">=20"
   },
   "devDependencies": {
+    "concurrently": "^9.0.1",
     "typescript": "^5.5.4"
   }
 }

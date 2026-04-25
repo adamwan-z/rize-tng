@@ -5,12 +5,20 @@ Personal CFO agent for Malaysian micro F&B merchants on TNG eWallet. Hackathon p
 ## Quick start
 
 ```bash
-cp .env.example .env       # fill in keys
+cp .env.example .env       # add ANTHROPIC_API_KEY at minimum
 npm install                # installs all workspaces
-docker compose up --build  # all 4 services
+npm run dev                # boots mock-tng + orchestrator + web in one terminal
 ```
 
 Open http://localhost:3000 and follow `pitch/demo-runbook.md`.
+
+For the live grant-fill demo (Lane C browser-agent in Python):
+
+```bash
+npm run dev:full           # adds the browser-agent on :5001 (requires uv + playwright)
+```
+
+`docker compose up --build` is still available as the production-style path.
 
 ## What this is
 
