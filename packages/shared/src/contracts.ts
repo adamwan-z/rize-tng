@@ -110,3 +110,16 @@ export const BrowserStepEvent = z.object({
   screenshotUrl: z.string().optional(),
 });
 export type BrowserStepEvent = z.infer<typeof BrowserStepEvent>;
+
+// ===== Alerts =====
+//
+// Returned by analytical tools (analyzeRevenue, analyzeStock, analyzeRunway,
+// suggestSupplyRun). Language-agnostic: the LLM phrases the alert in the
+// user's input language using `kind` and `context`. Never includes numbers
+// derived from estimated data (no daysLeft, no runway weeks).
+export const Alert = z.object({
+  kind: z.string(),
+  urgency: z.enum(['info', 'warn', 'critical']),
+  context: z.record(z.union([z.string(), z.number()])).optional(),
+});
+export type Alert = z.infer<typeof Alert>;
