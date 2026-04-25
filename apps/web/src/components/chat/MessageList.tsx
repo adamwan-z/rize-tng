@@ -3,6 +3,7 @@ import { Message } from './Message.js';
 import { ToolCallCard } from './ToolCallCard.js';
 import { BrowserViewport } from '../browser/BrowserViewport.js';
 import { HandoffCard } from '../handoff/HandoffCard.js';
+import { dispatchAgentCard } from '../agent/dispatchAgentCard.js';
 
 export type ChatItem =
   | { kind: 'user'; id: string; text: string }
@@ -24,7 +25,7 @@ export type ChatItem =
   | {
       kind: 'handoff';
       id: string;
-      handoffKind: 'payment' | 'review_submit' | 'email';
+      handoffKind: 'payment' | 'review_submit' | 'email' | 'decline';
       payload: Record<string, unknown>;
     }
   | { kind: 'error'; id: string; message: string };
@@ -44,7 +45,14 @@ export function MessageList({ items, streaming }: { items: ChatItem[]; streaming
             return <Message key={item.id} role="user" text={item.text} />;
           case 'agent_text':
             return <Message key={item.id} role="agent" text={item.text} streaming={streaming} />;
-          case 'tool_call':
+          case 'tool_call': {
+            const rich = dispatchAgentCard({
+              toolName: item.name,
+              input: item.input,
+              result: item.result,
+              status: item.status,
+            });
+            if (rich) return <div key={item.id}>{rich}</div>;
             return (
               <ToolCallCard
                 key={item.id}
@@ -54,6 +62,7 @@ export function MessageList({ items, streaming }: { items: ChatItem[]; streaming
                 result={item.result}
               />
             );
+          }
           case 'browser_run':
             return <BrowserViewport key={item.id} runId={item.runId} steps={item.steps} />;
           case 'handoff':

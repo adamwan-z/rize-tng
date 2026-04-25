@@ -72,7 +72,12 @@ function mergeEvent(items: ChatItem[], event: AgentEvent): ChatItem[] {
     case 'handoff':
       return [
         ...items,
-        { kind: 'handoff', id: crypto.randomUUID(), handoffKind: event.kind, payload: event.payload },
+        {
+          kind: 'handoff',
+          id: crypto.randomUUID(),
+          handoffKind: event.kind as 'payment' | 'review_submit' | 'email' | 'decline',
+          payload: event.payload,
+        },
       ];
     case 'error':
       return [...items, { kind: 'error', id: crypto.randomUUID(), message: event.message }];
