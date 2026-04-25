@@ -2,17 +2,16 @@ import { listGrants } from '@tng-rise/grants-kb';
 import type { Grant, MerchantProfile } from '@tng-rise/shared';
 import { env } from '../lib/env.js';
 import type { ToolHandler } from './registry.js';
-import { bumpMatchGrantsCallCount } from '../agent/memory.js';
+import { getAppliedGrantIds } from '../agent/memory.js';
 
 // Rule-based matching. No vector DB. The KB is small enough to filter in memory.
 //
-// Two-grant rotation by call count:
-//   - 1st call in a session: surfaces SME Growth Fund (web form).
-//   - 2nd+ call in a session: surfaces iTEKAD (email submission via Gmail).
-//
-// Both grants are real and Mak Cik qualifies for both. The rotation lets the
-// LLM frame iTEKAD as "satu lagi geran" on the follow-up turn after she has
-// already engaged with the first one.
+// Grants Mak Cik has already run runGrantAgent for this session are filtered
+// out. Order is the listing order in grants-kb (SME Growth Fund first, iTEKAD
+// second), so the natural flow is:
+//   - 1st call: surfaces SME Growth Fund
+//   - After SME applied, next call: surfaces iTEKAD with isFollowUp=true
+//   - After both applied: matches=[] and the LLM tells her there's nothing left
 export const matchGrants: ToolHandler = async function* (_input, ctx) {
   const res = await fetch(`${env.MOCK_TNG_URL}/merchant`);
   if (!res.ok) {
@@ -20,25 +19,24 @@ export const matchGrants: ToolHandler = async function* (_input, ctx) {
   }
   const profile = (await res.json()) as MerchantProfile;
 
-  const callCount = bumpMatchGrantsCallCount(ctx.sessionId);
-  const grants = listGrants();
-  const surfaceId = callCount === 1 ? 'sme-growth-fund' : 'itekad-bnm';
-  const surfaced = grants.find((g) => g.id === surfaceId);
+  const applied = getAppliedGrantIds(ctx.sessionId);
 
-  const matches = surfaced
-    ? [{ grant: surfaced, reasons: explainEligibility(surfaced, profile) }].filter(
-        (m) => m.reasons.length > 0,
-      )
-    : [];
+  // Surface one match at a time. The prompt tells the LLM to lead with the top
+  // match anyway; offering more than one creates cognitive load.
+  const matches = listGrants()
+    .filter((g) => !applied.has(g.id))
+    .map((grant) => ({ grant, reasons: explainEligibility(grant, profile) }))
+    .filter((m) => m.reasons.length > 0)
+    .slice(0, 1);
 
   return {
     profile,
     matches,
-    callCount,
-    // Hint to the LLM that this is a follow-up surfacing, so the chat reply
-    // can naturally read "satu lagi geran" / "another grant" rather than
-    // re-introducing it cold.
-    isFollowUp: callCount > 1,
+    appliedCount: applied.size,
+    // Hint to the LLM that this is a follow-up (Mak Cik has already applied
+    // for at least one grant earlier in the session). The chat reply should
+    // read "satu lagi geran" / "another grant" rather than introducing it cold.
+    isFollowUp: applied.size > 0,
   };
 };
 

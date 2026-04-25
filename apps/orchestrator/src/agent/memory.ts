@@ -11,10 +11,11 @@ type Session = {
   // the start of the next /chat turn (i.e. when Mak Cik replies). Gates
   // acceptFinancingTerms so the LLM cannot auto-approve in the same turn.
   pendingFinancingApprovalRunId: string | null;
-  // Incremented every time matchGrants runs in this session. The first call
-  // surfaces SME Growth Fund; the second call surfaces iTEKAD as the next
-  // grant Mak Cik qualifies for, so the LLM can frame it as "satu lagi geran".
-  matchGrantsCallCount: number;
+  // Grants Mak Cik has already run runGrantAgent for in this session.
+  // matchGrants filters these out so the same grant never gets re-offered.
+  // Once everything in the KB has been applied to, matchGrants returns an
+  // empty matches array and the LLM tells her there's nothing left.
+  appliedGrantIds: Set<string>;
 };
 
 const sessions = new Map<string, Session>();
@@ -26,7 +27,7 @@ export function getSession(id: string): Session {
       messages: [],
       firedAlerts: new Set(),
       pendingFinancingApprovalRunId: null,
-      matchGrantsCallCount: 0,
+      appliedGrantIds: new Set(),
     };
     sessions.set(id, s);
   }
@@ -57,10 +58,12 @@ export function markAlertFired(id: string, key: string): void {
   getSession(id).firedAlerts.add(key);
 }
 
-export function bumpMatchGrantsCallCount(id: string): number {
-  const s = getSession(id);
-  s.matchGrantsCallCount += 1;
-  return s.matchGrantsCallCount;
+export function markGrantApplied(id: string, grantId: string): void {
+  getSession(id).appliedGrantIds.add(grantId);
+}
+
+export function getAppliedGrantIds(id: string): Set<string> {
+  return getSession(id).appliedGrantIds;
 }
 
 export function clearSession(id: string): void {

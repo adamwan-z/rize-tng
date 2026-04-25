@@ -43,18 +43,38 @@ export function ChatWindow({ sessionId }: { sessionId: string }) {
 
   // Unlock the grant shortcut once the merchant has actually completed a Lotus
   // checkout. Sticky for the rest of the session so it reads as "next step
-  // unlocked" rather than a fleeting toast.
-  const showGrantBadge = useMemo(
-    () =>
-      items.some(
-        (it) =>
-          it.kind === 'tool_call' &&
-          it.name === 'confirmProcurementCheckout' &&
-          it.status === 'done' &&
-          (it.result as { ok?: boolean } | undefined)?.ok === true,
-      ),
-    [items],
-  );
+  // unlocked" rather than a fleeting toast — and hide it again once she has
+  // applied for every grant in the KB this session, so the badge doesn't keep
+  // pulsing when there is nothing left to apply for.
+  //
+  // TOTAL_GRANTS_IN_KB mirrors the count in packages/grants-kb. Bump it if a
+  // grant is added there.
+  const TOTAL_GRANTS_IN_KB = 2;
+  const showGrantBadge = useMemo(() => {
+    const lotusCompleted = items.some(
+      (it) =>
+        it.kind === 'tool_call' &&
+        it.name === 'confirmProcurementCheckout' &&
+        it.status === 'done' &&
+        (it.result as { ok?: boolean } | undefined)?.ok === true,
+    );
+    if (!lotusCompleted) return false;
+
+    const appliedGrantIds = new Set<string>();
+    for (const it of items) {
+      if (
+        it.kind === 'tool_call' &&
+        it.name === 'runGrantAgent' &&
+        it.status === 'done'
+      ) {
+        const r = it.result as { ok?: boolean; grantId?: string } | undefined;
+        if (r?.ok === true && typeof r.grantId === 'string') {
+          appliedGrantIds.add(r.grantId);
+        }
+      }
+    }
+    return appliedGrantIds.size < TOTAL_GRANTS_IN_KB;
+  }, [items]);
 
   const onGrantClick = useCallback(() => {
     void sendSilent('business grant');

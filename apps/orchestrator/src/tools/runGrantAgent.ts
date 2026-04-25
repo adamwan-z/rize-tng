@@ -2,8 +2,9 @@ import { getGrantById } from '@tng-rise/grants-kb';
 import { env } from '../lib/env.js';
 import type { AgentEvent, MerchantProfile } from '@tng-rise/shared';
 import type { ToolHandler } from './registry.js';
+import { markGrantApplied } from '../agent/memory.js';
 
-export const runGrantAgent: ToolHandler = async function* (input) {
+export const runGrantAgent: ToolHandler = async function* (input, ctx) {
   const grantId = input.grantId as string;
   const grant = getGrantById(grantId);
   if (!grant) {
@@ -58,6 +59,12 @@ export const runGrantAgent: ToolHandler = async function* (input) {
       yield forFe as AgentEvent;
     }
 
+    // Mark the grant as applied so matchGrants drops it on subsequent calls.
+    // Done on completion (not just on send-success) because the demo treats
+    // any completed run, including the recorded fallback, as Mak Cik having
+    // engaged with this grant.
+    markGrantApplied(ctx.sessionId, grantId);
+
     return {
       ok: true,
       kind: 'email',
@@ -110,6 +117,8 @@ export const runGrantAgent: ToolHandler = async function* (input) {
       referenceNumber,
     },
   };
+
+  markGrantApplied(ctx.sessionId, grantId);
 
   return { ok: true, kind: 'web_form', grantId, referenceNumber };
 };
