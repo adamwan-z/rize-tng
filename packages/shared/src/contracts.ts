@@ -52,6 +52,12 @@ export const MerchantProfile = z.object({
   registeredSince: z.string(),
   ssm: z.string().optional(),
   monthlyRevenueRm: z.number(),
+  monthlyCostsRm: z.object({
+    rent: z.number(),
+    utilities: z.number(),
+    gas: z.number(),
+    other: z.number(),
+  }),
 });
 export type MerchantProfile = z.infer<typeof MerchantProfile>;
 
