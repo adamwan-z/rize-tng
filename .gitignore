@@ -31,6 +31,9 @@ Thumbs.db
 .idea/
 *.swp
 
+# Worktrees
+.worktrees
+
 # Python
 __pycache__/
 *.py[cod]
