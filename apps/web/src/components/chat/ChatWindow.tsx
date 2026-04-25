@@ -4,11 +4,13 @@ import { useAgentStream } from '../../hooks/useAgentStream.js';
 import { MessageList, type ChatItem } from './MessageList.js';
 import { ChatInput } from './ChatInput.js';
 import { Greeting } from './Greeting.js';
+import { playHandoffCue } from '../../lib/sound.js';
 
 export function ChatWindow({ sessionId }: { sessionId: string }) {
   const [items, setItems] = useState<ChatItem[]>([]);
 
   const onEvent = useCallback((event: AgentEvent) => {
+    if (event.type === 'handoff') playHandoffCue();
     setItems((prev) => mergeEvent(prev, event));
   }, []);
 
