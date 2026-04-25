@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { AgentEvent } from '@tng-rise/shared';
 import { useAgentStream } from '../../hooks/useAgentStream.js';
 import { MessageList, type ChatItem } from './MessageList.js';
@@ -28,13 +28,37 @@ export function ChatWindow({ sessionId }: { sessionId: string }) {
     [send],
   );
 
+  // Unlock the grant shortcut once the merchant has actually completed a Lotus
+  // checkout. Sticky for the rest of the session so it reads as "next step
+  // unlocked" rather than a fleeting toast.
+  const showGrantBadge = useMemo(
+    () =>
+      items.some(
+        (it) =>
+          it.kind === 'tool_call' &&
+          it.name === 'confirmProcurementCheckout' &&
+          it.status === 'done' &&
+          (it.result as { ok?: boolean } | undefined)?.ok === true,
+      ),
+    [items],
+  );
+
+  const onGrantClick = useCallback(() => {
+    void onSubmit('business grant');
+  }, [onSubmit]);
+
   return (
     <div className="h-full flex flex-col max-w-3xl mx-auto px-4">
       <div className="pt-6">
         <Greeting />
       </div>
       <MessageList items={items} streaming={status === 'streaming'} />
-      <ChatInput onSubmit={onSubmit} disabled={status === 'streaming'} />
+      <ChatInput
+        onSubmit={onSubmit}
+        disabled={status === 'streaming'}
+        showGrantBadge={showGrantBadge}
+        onGrantClick={onGrantClick}
+      />
     </div>
   );
 }

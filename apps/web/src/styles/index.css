@@ -49,3 +49,15 @@ body {
 }
 .tng-typing-dot:nth-child(2) { animation-delay: 0.15s; }
 .tng-typing-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* Grant badge: notification-style double ripple every 3.5s to draw the eye. */
+@keyframes tng-grant-pulse {
+  0%        { box-shadow: 0 0 0 0   rgba(0, 91, 170, 0.55); transform: scale(1); }
+  15%       { box-shadow: 0 0 0 8px rgba(0, 91, 170, 0);    transform: scale(1.05); }
+  30%       { box-shadow: 0 0 0 0   rgba(0, 91, 170, 0.55); transform: scale(1); }
+  45%       { box-shadow: 0 0 0 8px rgba(0, 91, 170, 0);    transform: scale(1.05); }
+  60%, 100% { box-shadow: 0 0 0 0   rgba(0, 91, 170, 0);    transform: scale(1); }
+}
+.tng-grant-pulse {
+  animation: tng-grant-pulse 3.5s ease-out infinite;
+}
