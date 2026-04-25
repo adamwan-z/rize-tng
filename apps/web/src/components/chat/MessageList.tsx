@@ -71,6 +71,8 @@ export function MessageList({ items, streaming }: { items: ChatItem[]; streaming
             return (
               <div
                 key={item.id}
+                role="alert"
+                aria-live="assertive"
                 className="rounded-2xl p-4 border border-tng-pink/30 text-tng-pink text-sm leading-relaxed"
                 style={{ background: 'rgba(239, 78, 116, 0.06)' }}
               >
