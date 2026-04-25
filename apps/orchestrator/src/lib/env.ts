@@ -18,7 +18,7 @@ const Env = z.object({
   DASHSCOPE_API_KEY: z.string().optional(),
   QWEN_MODEL: z.string().default('qwen-max'),
 
-  MOCK_TNG_URL: z.string().url().default('http://localhost:5000'),
+  MOCK_TNG_URL: z.string().url().default('http://localhost:5050'),
   BROWSER_AGENT_URL: z.string().url().default('http://localhost:5001'),
 });
 

@@ -15,6 +15,6 @@ COPY packages/shared ./packages/shared
 COPY services/mock-tng ./services/mock-tng
 
 ENV NODE_ENV=production
-EXPOSE 5000
+EXPOSE 5050
 
 CMD ["npx", "tsx", "services/mock-tng/src/server.ts"]

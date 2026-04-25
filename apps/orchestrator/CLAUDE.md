@@ -12,7 +12,7 @@ Everything under `apps/orchestrator/`. You also own `packages/shared/`.
 Never call vendor SDKs outside `src/llm/`. Always go through `getLLM()`. Default `LLM_PROVIDER=anthropic` for development. `bedrock` for the demo. `qwen` is optional and used only for Malay paraphrase.
 
 ## Tool dispatching
-- Tools needing merchant data: call mock TNG (`http://mock-tng:5000`)
+- Tools needing merchant data: call mock TNG (`http://mock-tng:5050`)
 - Tools needing grant data: read `packages/grants-kb` directly via `import { listGrants, getGrantById } from '@tng-rise/grants-kb'`
 - Tools needing a browser run: call browser agent (`http://browser-agent:5001`) and forward `browser_step` events through your SSE stream
 

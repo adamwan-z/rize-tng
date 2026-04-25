@@ -329,7 +329,7 @@ Everything under `apps/orchestrator/`. You also own `packages/shared/`.
 Never call vendor SDKs outside `src/llm/`. Always go through `getLLM()`. Default `LLM_PROVIDER=anthropic` for development. `bedrock` for the demo. `qwen` is optional and used only for Malay paraphrase.
 
 ## Tool dispatching
-- Tools needing merchant data: call mock TNG (`http://mock-tng:5000`)
+- Tools needing merchant data: call mock TNG (`http://mock-tng:5050`)
 - Tools needing grant data: read `packages/grants-kb/data/*.json` directly
 - Tools needing a browser run: call browser agent (`http://browser-agent:5001`) and forward `browser_step` events through your SSE stream
 
@@ -613,7 +613,7 @@ Find 3 to 5 real Malaysian micro-SME stats. Sources: AKPK, BNM annual report, DO
 ```
 cd services/mock-tng
 npm install
-npm run dev    # :5000
+npm run dev    # :5050
 
 # From repo root
 docker compose up

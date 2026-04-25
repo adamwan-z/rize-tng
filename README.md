@@ -60,7 +60,7 @@ no FE, no LLM required for `mode: "scripted"`.
 
 ```bash
 # Two terminals, or use docker compose
-cd services/mock-tng     && npm install && npm run dev      # :5000
+cd services/mock-tng     && npm install && npm run dev      # :5050
 cd services/browser-agent && uv sync && uv run python -m playwright install chromium
 cd services/browser-agent && uv run python -m src.server     # :5001
 ```
@@ -114,7 +114,7 @@ from src.flows.grant_application import run_grant_application
 async for event in run_grant_application(
     run_id="local-1",
     profile={"full_name": "Siti binti Hassan", ...},
-    application_url="http://localhost:5000/grant.html",
+    application_url="http://localhost:5050/grant.html",
     mode="scripted",
 ):
     print(event)
@@ -182,7 +182,7 @@ Every line in the response stream is one `StepEvent`:
 {"runId":"a1...","step":6,"description":"Step 3/3 Funding details","screenshotUrl":"..."}
 {"runId":"a1...","step":7,"description":"Borang lengkap. Submitting.","screenshotUrl":"..."}
 {"runId":"a1...","step":8,"description":"Submitted. Reference: TER-2026-04-8821","screenshotUrl":"..."}
-{"runId":"a1...","step":9,"description":"Application submitted. Reference: TER-2026-04-8821","done":true,"result":{"ok":true,"grantId":"tekun-mikro","mode":"scripted","applicationUrl":"http://localhost:5000/grant.html","referenceNumber":"TER-2026-04-8821"}}
+{"runId":"a1...","step":9,"description":"Application submitted. Reference: TER-2026-04-8821","done":true,"result":{"ok":true,"grantId":"tekun-mikro","mode":"scripted","applicationUrl":"http://localhost:5050/grant.html","referenceNumber":"TER-2026-04-8821"}}
 ```
 
 The grant `result` shape:

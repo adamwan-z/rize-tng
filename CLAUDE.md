@@ -121,7 +121,7 @@ docker compose up
 cd apps/web && npm run dev                    # :3000
 cd apps/orchestrator && npm run dev           # :4000
 cd services/browser-agent && uv run python -m src.server   # :5001
-cd services/mock-tng && npm run dev           # :5000
+cd services/mock-tng && npm run dev           # :5050
 
 # Type check shared contracts
 cd packages/shared && npm run typecheck

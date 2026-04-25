@@ -32,7 +32,7 @@ Expected: All workspaces pass. If any pre-existing TypeScript errors appear, sto
 **Step 3: Verify mock-tng boots**
 
 Run: `cd services/mock-tng && npm run dev` (in a background terminal)
-Expected: `mock-tng listening on :5000`. Hit `curl http://localhost:5000/health` and confirm `{"ok":true,"service":"mock-tng"}`. Kill the process when done.
+Expected: `mock-tng listening on :5050`. Hit `curl http://localhost:5050/health` and confirm `{"ok":true,"service":"mock-tng"}`. Kill the process when done.
 
 **Step 4: No commit needed** (no code changes).
 
@@ -159,11 +159,11 @@ Open `services/mock-tng/src/data/profile.json` and add `monthlyCostsRm`:
 **Step 2: Verify mock-tng now boots**
 
 Run: `cd services/mock-tng && npm run dev`
-Expected: `mock-tng listening on :5000`.
+Expected: `mock-tng listening on :5050`.
 
 **Step 3: Verify the field is served**
 
-Run (in another terminal): `curl http://localhost:5000/merchant`
+Run (in another terminal): `curl http://localhost:5050/merchant`
 Expected: JSON includes `"monthlyCostsRm": { "rent": 800, ... }`.
 Kill mock-tng.
 
@@ -463,7 +463,7 @@ Create `apps/orchestrator/scripts/smoke-analyzeRevenue.ts`:
 // Asserts shape, not specific numbers (those are seeded daily).
 //
 // Run with: npx tsx apps/orchestrator/scripts/smoke-analyzeRevenue.ts
-// Requires mock-tng running on :5000.
+// Requires mock-tng running on :5050.
 
 import { analyzeRevenue } from '../src/tools/analyzeRevenue.js';
 import type { Alert } from '@tng-rise/shared';
@@ -1227,7 +1227,7 @@ git commit -m "Update system prompt with 6 new rules and analytical tool invento
 **Step 1: Start mock-tng**
 
 Run: `cd services/mock-tng && npm run dev` (background)
-Expected: listening on :5000.
+Expected: listening on :5050.
 
 **Step 2: Run all four smoke scripts in sequence**
 
@@ -1257,7 +1257,7 @@ Create `apps/orchestrator/scripts/smoke-chat.sh` (chmod +x):
 ```bash
 #!/usr/bin/env bash
 # Drive POST /chat with the runbook scenarios. Eyeball the SSE output.
-# Prereq: mock-tng on :5000, orchestrator on :4000, ANTHROPIC_API_KEY set.
+# Prereq: mock-tng on :5050, orchestrator on :4000, ANTHROPIC_API_KEY set.
 
 set -e
 
@@ -1353,7 +1353,7 @@ Run (in separate terminals):
 - `cd apps/orchestrator && LLM_PROVIDER=anthropic ANTHROPIC_API_KEY=... npm run dev`
 - `cd apps/web && npm run dev`
 
-Expected: web on :3000, orchestrator on :4000, mock-tng on :5000.
+Expected: web on :3000, orchestrator on :4000, mock-tng on :5050.
 
 **Step 2: Walk `pitch/demo-runbook.md` step by step**
 

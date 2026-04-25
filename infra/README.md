@@ -15,7 +15,7 @@ Services:
 | --- | --- | --- |
 | Frontend | 3000 | http://localhost:3000 |
 | Orchestrator | 4000 | http://localhost:4000 |
-| Mock TNG | 5000 | http://localhost:5000 |
+| Mock TNG | 5000 | http://localhost:5050 |
 | Browser agent | 5001 | http://localhost:5001 |
 
 ## Cloud setup

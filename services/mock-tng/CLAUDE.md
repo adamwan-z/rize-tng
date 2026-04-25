@@ -45,7 +45,7 @@ Find 3 to 5 real Malaysian micro-SME stats. Sources: AKPK, BNM annual report, DO
 ```
 cd services/mock-tng
 npm install
-npm run dev    # :5000
+npm run dev    # :5050
 
 # From repo root
 docker compose -f infra/docker-compose.yml up --build

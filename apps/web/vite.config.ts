@@ -10,7 +10,7 @@ export default defineConfig({
       '/chat': { target: 'http://localhost:4000', changeOrigin: true },
       '/health': { target: 'http://localhost:4000', changeOrigin: true },
       '/api/merchant': {
-        target: 'http://localhost:5000',
+        target: 'http://localhost:5050',
         rewrite: (p) => p.replace(/^\/api/, ''),
         changeOrigin: true,
       },

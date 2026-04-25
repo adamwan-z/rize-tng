@@ -2,7 +2,7 @@
 // Asserts shape, not specific numbers (those are seeded daily).
 //
 // Run with: npx tsx apps/orchestrator/scripts/smoke-analyzeRevenue.ts
-// Requires mock-tng running on :5000.
+// Requires mock-tng running on :5050.
 
 import { analyzeRevenue } from '../src/tools/analyzeRevenue.js';
 import type { Alert } from '@tng-rise/shared';
