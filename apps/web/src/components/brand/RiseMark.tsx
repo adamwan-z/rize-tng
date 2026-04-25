@@ -3,7 +3,7 @@ export function RiseMark() {
     <div
       className="flex items-center gap-3"
       role="img"
-      aria-label="Living with TNG eWallet, Rise"
+      aria-label="Living with TNG eWallet, GoRise"
     >
       <div className="flex flex-col text-[10px] font-mono font-semibold uppercase tracking-widest text-ink-500 leading-tight">
         <span>Living</span>
@@ -21,26 +21,9 @@ export function RiseMark() {
         </div>
       </div>
       <div className="w-px h-8 bg-surface-2" aria-hidden />
-      <div className="flex items-center gap-2">
-        <svg
-          width="22"
-          height="14"
-          viewBox="0 0 24 16"
-          fill="none"
-          aria-hidden
-          style={{ color: 'var(--rise-accent)' }}
-        >
-          <polyline
-            points="2 12 12 4 22 12"
-            stroke="currentColor"
-            strokeWidth="3"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-        <span className="font-editorial italic text-ink-900 text-[24px] leading-none tracking-tight">
-          Rise
-        </span>
+      <div className="font-display font-extrabold text-[24px] leading-none tracking-tight">
+        <span style={{ color: 'var(--tng-blue-deep)' }}>Go</span>
+        <span style={{ color: 'var(--tng-blue)' }}>Rise</span>
       </div>
     </div>
   );
