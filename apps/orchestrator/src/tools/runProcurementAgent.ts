@@ -12,12 +12,17 @@ import type { ToolHandler } from './registry.js';
 // unknown ones). We translate name -> sku via the catalog mock-tng serves.
 export const runProcurementAgent: ToolHandler = async function* (input) {
   const rawItems = (input.items as Array<{ name: string; quantity: number }>) ?? [];
-  const items = await Promise.all(
+  const resolved = await Promise.all(
     rawItems.map(async (it) => ({
       sku: await mapNameToSku(it.name),
       quantity: it.quantity,
     })),
   );
+  // The LLM often lists the same product under multiple natural-language
+  // names ("eggs", "fresh eggs", "telur") which all map to one SKU. Merge
+  // duplicates so the cart doesn't get the same item twice and the FE
+  // confirm card doesn't trip on duplicate React keys.
+  const items = mergeBySku(resolved);
   const mode = (input.mode as 'scripted' | 'agent' | undefined) ?? 'scripted';
 
   const res = await fetch(`${env.BROWSER_AGENT_URL}/run/lotus_procurement`, {
@@ -130,6 +135,16 @@ async function mapNameToSku(name: string): Promise<string> {
   throw new Error(
     `No catalog match for "${name}". Available: ${catalog.map((p) => p.name).join(', ')}`,
   );
+}
+
+function mergeBySku(
+  items: Array<{ sku: string; quantity: number }>,
+): Array<{ sku: string; quantity: number }> {
+  const totals = new Map<string, number>();
+  for (const it of items) {
+    totals.set(it.sku, (totals.get(it.sku) ?? 0) + it.quantity);
+  }
+  return Array.from(totals, ([sku, quantity]) => ({ sku, quantity }));
 }
 
 function tokenize(s: string): string[] {

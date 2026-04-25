@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import base64
 import os
 import time
 from collections.abc import AsyncIterator
@@ -24,14 +25,28 @@ async def emit_step(
     description: str,
     page: Page | None = None,
 ) -> dict[str, Any]:
-    """Build a browser_step event. Captures and stores a screenshot if a page is given."""
+    """Build a browser_step event. Captures and stores a screenshot if a page is given.
+
+    Uses CDP `Page.captureScreenshot` instead of `page.screenshot()` so the
+    headful window does not resize-to-1px-and-back per shot (Playwright bugs
+    #2576, #29487, #30149). Same technique `patch_browser_use.py` applies to
+    agent mode; here it covers scripted mode too.
+    """
 
     screenshot_url: str | None = None
     if page is not None:
         try:
             filename = f"{run_id}_{step:03d}_{int(time.time())}.png"
             local_path = SCREENSHOT_DIR / filename
-            await page.screenshot(path=str(local_path), full_page=False)
+            cdp = await page.context.new_cdp_session(page)
+            try:
+                result = await cdp.send(
+                    "Page.captureScreenshot",
+                    {"format": "png", "captureBeyondViewport": False},
+                )
+            finally:
+                await cdp.detach()
+            local_path.write_bytes(base64.b64decode(result["data"]))
             screenshot_url = await upload_screenshot(local_path, filename)
         except Exception as exc:  # screenshot failure should not crash the run
             print(f"[runner] screenshot failed at step {step}: {exc}")
