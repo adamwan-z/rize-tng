@@ -1,0 +1,22 @@
+{
+  "name": "@tng-rise/grants-kb",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Curated Malaysian SME grants knowledge base. Five real grants verified for the hackathon demo.",
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tng-rise/shared": "*",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

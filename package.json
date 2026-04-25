@@ -1,0 +1,26 @@
+{
+  "name": "tng-rise",
+  "version": "0.1.0",
+  "private": true,
+  "description": "TNG Rise: AI CFO agent for Malaysian micro F&B merchants. Hackathon project.",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "services/mock-tng"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace apps/web",
+    "dev:orchestrator": "npm run dev --workspace apps/orchestrator",
+    "dev:mock-tng": "npm run dev --workspace services/mock-tng",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present",
+    "compose:up": "docker compose up --build",
+    "compose:down": "docker compose down"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4"
+  }
+}

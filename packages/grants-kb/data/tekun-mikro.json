@@ -1,0 +1,16 @@
+{
+  "id": "tekun-mikro",
+  "name": "Skim Pembiayaan Mikro TEKUN",
+  "agency": "TEKUN Nasional",
+  "description": "Pembiayaan mikro untuk usahawan kecil sehingga RM 50,000. Tempoh bayaran balik sehingga 5 tahun.",
+  "maxAmountRm": 50000,
+  "eligibility": [
+    "Warganegara Malaysia",
+    "Umur 18 hingga 60 tahun",
+    "Perniagaan beroperasi sekurang-kurangnya 6 bulan",
+    "Pendapatan isi rumah kurang RM 8,000 sebulan",
+    "Tidak mempunyai pinjaman tertunggak dengan TEKUN"
+  ],
+  "submissionMethod": "web_form",
+  "applicationUrl": "https://www.tekun.gov.my/permohonan-pembiayaan/"
+}

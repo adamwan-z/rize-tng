@@ -1,0 +1,28 @@
+{
+  "name": "@tng-rise/orchestrator",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent core. LLM tool-use loop, tool dispatching, SSE streaming.",
+  "type": "module",
+  "main": "./src/server.ts",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0",
+    "@aws-sdk/client-bedrock-runtime": "^3.658.0",
+    "@hono/node-server": "^1.13.7",
+    "@tng-rise/grants-kb": "*",
+    "@tng-rise/shared": "*",
+    "hono": "^4.6.10",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4"
+  }
+}

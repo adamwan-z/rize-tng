@@ -1,0 +1,26 @@
+# Production overrides. Compose merges this with /docker-compose.yml when invoked
+# with `-f docker-compose.yml -f infra/docker-compose.prod.yml`.
+#
+# Stretch goal only. The hackathon demo runs on the base compose file.
+
+services:
+  orchestrator:
+    restart: unless-stopped
+    environment:
+      LLM_PROVIDER: bedrock
+      NODE_ENV: production
+
+  browser-agent:
+    restart: unless-stopped
+    environment:
+      HEADLESS: "1"
+
+  mock-tng:
+    restart: unless-stopped
+
+  web:
+    # In production we serve the built static bundle, not Vite dev. Replace this
+    # with an nginx image that COPYs from `apps/web/dist/` once a deploy target
+    # is chosen.
+    profiles:
+      - skip

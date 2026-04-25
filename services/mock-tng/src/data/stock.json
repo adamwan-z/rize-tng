@@ -1,0 +1,12 @@
+[
+  { "name": "Daging salai", "unit": "kg", "currentQty": 3.5, "weeklyUsage": 18, "lastPriceRm": 42.0 },
+  { "name": "Beras pulut", "unit": "kg", "currentQty": 12, "weeklyUsage": 25, "lastPriceRm": 4.5 },
+  { "name": "Beras putih", "unit": "kg", "currentQty": 35, "weeklyUsage": 30, "lastPriceRm": 3.2 },
+  { "name": "Santan segar", "unit": "liter", "currentQty": 4, "weeklyUsage": 14, "lastPriceRm": 6.0 },
+  { "name": "Bawang merah", "unit": "kg", "currentQty": 6, "weeklyUsage": 8, "lastPriceRm": 8.5 },
+  { "name": "Cili kering", "unit": "kg", "currentQty": 1.2, "weeklyUsage": 2, "lastPriceRm": 28.0 },
+  { "name": "Minyak masak", "unit": "liter", "currentQty": 9, "weeklyUsage": 10, "lastPriceRm": 7.8 },
+  { "name": "Telur ayam", "unit": "biji", "currentQty": 60, "weeklyUsage": 120, "lastPriceRm": 0.55 },
+  { "name": "Kicap manis", "unit": "liter", "currentQty": 2.5, "weeklyUsage": 3, "lastPriceRm": 12.0 },
+  { "name": "Garam halus", "unit": "kg", "currentQty": 4, "weeklyUsage": 1.5, "lastPriceRm": 2.5 }
+]

@@ -1,0 +1,31 @@
+{
+  "flow": "lotus_procurement",
+  "recordedAt": "2026-04-25T14:00:00+08:00",
+  "target": "Lotuss Malaysia online store",
+  "steps": [
+    {
+      "description": "Buka Lotuss.com.my",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+1+%7C+Buka+Lotus"
+    },
+    {
+      "description": "Cari 'Daging salai' di search bar",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+2+%7C+Cari+Daging"
+    },
+    {
+      "description": "Tambah 5kg daging salai ke cart",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+3+%7C+Add+Daging"
+    },
+    {
+      "description": "Cari 'Beras pulut'",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+4+%7C+Beras+Pulut"
+    },
+    {
+      "description": "Tambah 10kg beras pulut",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+5+%7C+Add+Beras"
+    },
+    {
+      "description": "Cart RM 234.50, berhenti sebelum bayar.",
+      "screenshotUrl": "https://placehold.co/1280x720/10B981/FFFFFF/png?text=Step+6+%7C+Siap+%E2%9C%93"
+    }
+  ]
+}

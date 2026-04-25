@@ -1,0 +1,81 @@
+services:
+  mock-tng:
+    build:
+      context: .
+      dockerfile: services/mock-tng/Dockerfile
+    image: tng-rise/mock-tng
+    ports:
+      - "5000:5000"
+    environment:
+      PORT: 5000
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:5000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  browser-agent:
+    build:
+      context: .
+      dockerfile: services/browser-agent/Dockerfile
+    image: tng-rise/browser-agent
+    ports:
+      - "5001:5001"
+    environment:
+      PORT: 5001
+      HEADLESS: "1"
+      OSS_REGION: ${OSS_REGION:-}
+      OSS_BUCKET: ${OSS_BUCKET:-}
+      OSS_ENDPOINT: ${OSS_ENDPOINT:-}
+      OSS_ACCESS_KEY_ID: ${OSS_ACCESS_KEY_ID:-}
+      OSS_ACCESS_KEY_SECRET: ${OSS_ACCESS_KEY_SECRET:-}
+      BROWSER_AGENT_PUBLIC_URL: http://browser-agent:5001
+    volumes:
+      - browser-screenshots:/app/screenshots
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:5001/health').read()\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  orchestrator:
+    build:
+      context: .
+      dockerfile: apps/orchestrator/Dockerfile
+    image: tng-rise/orchestrator
+    ports:
+      - "4000:4000"
+    environment:
+      PORT: 4000
+      LLM_PROVIDER: ${LLM_PROVIDER:-anthropic}
+      LLM_MODEL: ${LLM_MODEL:-claude-sonnet-4-6}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      AWS_REGION: ${AWS_REGION:-ap-southeast-5}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+      BEDROCK_MODEL_ID: ${BEDROCK_MODEL_ID:-anthropic.claude-sonnet-4-6}
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+      MOCK_TNG_URL: http://mock-tng:5000
+      BROWSER_AGENT_URL: http://browser-agent:5001
+    depends_on:
+      mock-tng:
+        condition: service_healthy
+      browser-agent:
+        condition: service_healthy
+
+  web:
+    image: node:20-alpine
+    working_dir: /app
+    command: sh -c "npm install --workspaces --include-workspace-root && npm run dev --workspace apps/web -- --host 0.0.0.0"
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      VITE_ORCHESTRATOR_URL: http://localhost:4000
+    depends_on:
+      - orchestrator
+
+volumes:
+  browser-screenshots:

@@ -1,0 +1,25 @@
+{
+  "name": "@tng-rise/mock-tng",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Mock TNG merchant API. Returns realistic Malaysian micro F&B data for the demo.",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/server.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tng-rise/shared": "*",
+    "express": "^4.21.1",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.7.5",
+    "tsx": "^4.19.1",
+    "typescript": "^5.5.4"
+  }
+}

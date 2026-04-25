@@ -1,0 +1,39 @@
+{
+  "flow": "grant_application",
+  "recordedAt": "2026-04-25T14:00:00+08:00",
+  "target": "TEKUN Mikro (illustrative replica served from mock-tng if live unavailable)",
+  "steps": [
+    {
+      "description": "Buka portal TEKUN, tunggu page load",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+1+%7C+Buka+TEKUN"
+    },
+    {
+      "description": "Klik 'Permohonan Pembiayaan' di nav atas",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+2+%7C+Klik+Permohonan"
+    },
+    {
+      "description": "Pilih kategori 'Mikro Kredit'",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+3+%7C+Pilih+Mikro"
+    },
+    {
+      "description": "Masukkan nama penuh: Aminah binti Hassan",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+4+%7C+Nama"
+    },
+    {
+      "description": "Masukkan No SSM: JM0823491-W",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+5+%7C+SSM"
+    },
+    {
+      "description": "Masukkan alamat perniagaan: Kampung Baru, KL",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+6+%7C+Alamat"
+    },
+    {
+      "description": "Pendapatan bulanan: RM 14,800",
+      "screenshotUrl": "https://placehold.co/1280x720/F97316/FFFFFF/png?text=Step+7+%7C+Pendapatan"
+    },
+    {
+      "description": "Borang lengkap. Berhenti sebelum Submit.",
+      "screenshotUrl": "https://placehold.co/1280x720/10B981/FFFFFF/png?text=Step+8+%7C+Siap+%E2%9C%93"
+    }
+  ]
+}
