@@ -166,12 +166,23 @@ async def _run_agent(
     items: list[ShoppingItem],
     captured: dict[str, Any],
 ) -> AsyncIterator[dict[str, Any]]:
-    """browser-use AI agent. Ports fill_agent_lotus.py."""
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        raise RuntimeError("ANTHROPIC_API_KEY not set; agent mode unavailable")
+    """browser-use AI agent with deterministic recovery.
 
+    Same two-track strategy as grant_application._run_agent:
+    1. Patch browser-use, run the agent.
+    2. Whatever the agent's final answer says, scrape subtotal/total
+       directly from the cart and checkout DOM.
+    3. If the agent stalled before checkout, navigate cart -> checkout
+       -> select slot deterministically so the totals are still readable.
+    """
     from browser_use import Agent, Browser, BrowserConfig
-    from langchain_anthropic import ChatAnthropic
+    from browser_use.browser.context import BrowserContext, BrowserContextConfig
+
+    from ..lib.agent_llm import select_agent_llm, selected_provider_name
+    from ..lib.patch_browser_use import apply as patch_browser_use
+
+    patch_browser_use()
+    llm = select_agent_llm()
 
     list_text = "\n".join(f"{i+1}. {it.sku} (qty {it.quantity})" for i, it in enumerate(items))
     task = (
@@ -186,24 +197,85 @@ async def _run_agent(
         f"Shopping list:\n{list_text}"
     )
 
-    yield {"runId": run_id, "step": 1, "description": "Agent starting Lotus run"}
+    yield {
+        "runId": run_id,
+        "step": 1,
+        "description": f"Agent starting Lotus run via {selected_provider_name()}",
+    }
 
     browser = Browser(config=BrowserConfig(headless=HEADLESS))
+    context = BrowserContext(
+        browser=browser,
+        config=BrowserContextConfig(
+            highlight_elements=False,
+            wait_between_actions=0.2,
+            wait_for_network_idle_page_load_time=0.3,
+            minimum_wait_page_load_time=0.1,
+        ),
+    )
+
     agent = Agent(
         task=task,
-        llm=ChatAnthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=4096),
-        browser=browser,
+        llm=llm,
+        browser_context=context,
         use_vision=True,
         max_failures=3,
         max_actions_per_step=4,
     )
-    history = await agent.run(max_steps=50)
-    final = (history.final_result() or "").strip()
-    captured["total"] = final or None
 
-    yield {
-        "runId": run_id,
-        "step": 99,
-        "description": f"Agent finished. {final or 'No final message.'}",
-    }
+    try:
+        await agent.run(max_steps=50)
+    except Exception as exc:
+        yield {
+            "runId": run_id,
+            "step": 2,
+            "description": f"Agent loop crashed: {exc}. Trying deterministic recovery.",
+        }
+
+    page = await context.get_current_page()
+    on_checkout = False
+    try:
+        await page.wait_for_selector('[data-test="checkout-total"]', timeout=2000)
+        on_checkout = True
+    except Exception:
+        # Try our own checkout navigation if the agent didn't get there.
+        try:
+            await page.click('[data-test="cart-button"]')
+            await page.click('[data-test="proceed-checkout"]')
+            await page.wait_for_selector('[data-test="checkout-total"]', timeout=5000)
+            on_checkout = True
+            yield {
+                "runId": run_id,
+                "step": 3,
+                "description": "Agent did not reach checkout, navigated deterministically.",
+            }
+        except Exception:
+            on_checkout = False
+
+    if on_checkout:
+        # Make sure a slot is selected so total includes delivery fee.
+        try:
+            await page.check('[data-test="slot-today-evening"]')
+        except Exception:
+            pass
+        subtotal = (await page.text_content('[data-test="cart-subtotal"]') or "").strip()
+        total = (await page.text_content('[data-test="checkout-total"]') or "").strip()
+        captured["subtotal"] = subtotal or None
+        captured["total"] = total or None
+        yield await emit_step(
+            run_id=run_id,
+            step=99,
+            description=f"Agent finished. Subtotal {subtotal} - Total {total}",
+            page=page,
+        )
+    else:
+        captured["subtotal"] = None
+        captured["total"] = None
+        yield {
+            "runId": run_id,
+            "step": 99,
+            "description": "Agent did not reach checkout. No totals captured.",
+        }
+
+    await context.close()
     await browser.close()

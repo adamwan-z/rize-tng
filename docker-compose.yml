@@ -30,6 +30,13 @@ services:
       OSS_ACCESS_KEY_ID: ${OSS_ACCESS_KEY_ID:-}
       OSS_ACCESS_KEY_SECRET: ${OSS_ACCESS_KEY_SECRET:-}
       BROWSER_AGENT_PUBLIC_URL: http://browser-agent:5001
+      MOCK_TNG_URL: http://mock-tng:5050
+      # Agent-mode LLMs. Qwen wins if both are set.
+      DASHSCOPE_API_KEY: ${DASHSCOPE_API_KEY:-}
+      DASHSCOPE_BASE_URL: ${DASHSCOPE_BASE_URL:-}
+      QWEN_MODEL: ${QWEN_MODEL:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      BROWSER_AGENT_ANTHROPIC_MODEL: ${BROWSER_AGENT_ANTHROPIC_MODEL:-}
     volumes:
       - browser-screenshots:/app/screenshots
     healthcheck:

@@ -206,13 +206,28 @@ async def _run_agent(
     grant_id: str,
     captured: dict[str, Any],
 ) -> AsyncIterator[dict[str, Any]]:
-    """browser-use AI agent fill. Ports fill_agent.py."""
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        raise RuntimeError("ANTHROPIC_API_KEY not set; agent mode unavailable")
+    """browser-use AI agent fill with deterministic recovery.
 
-    # Imports are local so scripted-only deployments do not need these libs.
+    Strategy:
+    1. Apply the CDP screenshot patch to suppress headful flicker.
+    2. Run browser-use Agent with the configured LLM (Qwen or Claude).
+    3. Regardless of how the agent exits (success, crash, garbage final
+       answer), scrape the reference number directly from the page DOM.
+    4. If the agent stalled before Submit, click Submit deterministically.
+
+    This makes the result shape identical to scripted mode: the caller
+    always sees `referenceNumber` populated when the form actually
+    submitted, never relying on the LLM's free-text final answer.
+    """
+    # Local imports keep scripted-only deployments lean.
     from browser_use import Agent, Browser, BrowserConfig
-    from langchain_anthropic import ChatAnthropic
+    from browser_use.browser.context import BrowserContext, BrowserContextConfig
+
+    from ..lib.agent_llm import select_agent_llm, selected_provider_name
+    from ..lib.patch_browser_use import apply as patch_browser_use
+
+    patch_browser_use()
+    llm = select_agent_llm()
 
     profile_text = "\n".join(
         f"- {k.replace('_', ' ').title()}: {v}" for k, v in profile.model_dump().items()
@@ -233,31 +248,77 @@ async def _run_agent(
     yield {
         "runId": run_id,
         "step": 1,
-        "description": f"Agent starting against {grant_id}",
+        "description": f"Agent starting against {grant_id} via {selected_provider_name()}",
     }
 
     browser = Browser(config=BrowserConfig(headless=HEADLESS))
+    context = BrowserContext(
+        browser=browser,
+        config=BrowserContextConfig(
+            highlight_elements=False,
+            wait_between_actions=0.2,
+            wait_for_network_idle_page_load_time=0.3,
+            minimum_wait_page_load_time=0.1,
+        ),
+    )
+
     agent = Agent(
         task=task,
-        llm=ChatAnthropic(model="claude-sonnet-4-5", temperature=0, max_tokens=4096),
-        browser=browser,
+        llm=llm,
+        browser_context=context,
         use_vision=True,
         max_failures=3,
         max_actions_per_step=4,
     )
 
-    history = await agent.run(max_steps=25)
-    final = (history.final_result() or "").strip()
-    # The agent's final answer is the reference number (per the task prompt).
-    # Be lenient: accept either the raw ref string or any line containing it.
-    import re
+    try:
+        await agent.run(max_steps=25)
+    except Exception as exc:
+        # Don't propagate. Let the deterministic recovery below try.
+        yield {
+            "runId": run_id,
+            "step": 2,
+            "description": f"Agent loop crashed: {exc}. Trying deterministic recovery.",
+        }
 
-    match = re.search(r"TER-\d{4}-\d{2}-\d+", final)
-    captured["referenceNumber"] = match.group(0) if match else None
+    # Two-track finish: scrape result from page DOM regardless of LLM output.
+    page = await context.get_current_page()
+    submitted_check = "() => document.body.dataset.submitted === 'true'"
 
-    yield {
-        "runId": run_id,
-        "step": 99,
-        "description": f"Agent finished. Reference: {captured['referenceNumber'] or final or '(none)'}",
-    }
+    submitted = False
+    try:
+        await page.wait_for_function(submitted_check, timeout=2000)
+        submitted = True
+    except Exception:
+        # HTML5 validation may have blocked the agent's click. Try our own.
+        try:
+            await page.click('[data-test="submit"]')
+            await page.wait_for_function(submitted_check, timeout=5000)
+            submitted = True
+            yield {
+                "runId": run_id,
+                "step": 3,
+                "description": "Agent stalled at Submit, clicked deterministically.",
+            }
+        except Exception:
+            submitted = False
+
+    if submitted:
+        ref = (await page.text_content('[data-test="reference-no"]') or "").strip()
+        captured["referenceNumber"] = ref or None
+        yield await emit_step(
+            run_id=run_id,
+            step=99,
+            description=f"Agent finished. Reference: {ref or '(none)'}",
+            page=page,
+        )
+    else:
+        captured["referenceNumber"] = None
+        yield {
+            "runId": run_id,
+            "step": 99,
+            "description": "Agent did not reach success page. No reference captured.",
+        }
+
+    await context.close()
     await browser.close()

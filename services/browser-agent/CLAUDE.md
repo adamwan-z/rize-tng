@@ -23,8 +23,40 @@ src/flows/lotus_procurement.py      run_lotus_procurement(run_id, items, mode)
 ```
 
 Modes: `scripted` (deterministic Playwright, demo-safe, no API key) and
-`agent` (browser-use + Anthropic, the wow moment). On runtime failure,
-both fall back to `replay_recording()`.
+`agent` (browser-use, the wow moment). On runtime failure, both fall back
+to `replay_recording()`.
+
+## Agent-mode LLM selection
+
+`mode: agent` auto-selects the LLM based on env vars (in `src/lib/agent_llm.py`):
+
+| Env var set        | LLM picked                  | Notes                                           |
+|--------------------|-----------------------------|-------------------------------------------------|
+| `DASHSCOPE_API_KEY` | Qwen (`qwen-vl-max` default) | Multi-cloud demo path. Vision-language model.   |
+| `ANTHROPIC_API_KEY` | Claude (`claude-sonnet-4-6` default) | Dev fallback when no DashScope key.       |
+| Neither            | raises `AgentLLMUnavailable` | scripted mode keeps working without a key.     |
+
+Override the model: `QWEN_MODEL` or `BROWSER_AGENT_ANTHROPIC_MODEL`.
+
+## Agent-mode flicker fix
+
+`src/lib/patch_browser_use.py` monkey-patches `BrowserContext.take_screenshot`
+to use a CDP `Page.captureScreenshot` instead of `page.screenshot()`. The
+default Playwright path resizes the headful window to ~1px during capture,
+which is what causes the flicker every step. Apply once at agent-mode entry.
+
+`BrowserContext` is also configured with `highlight_elements=False` so the
+orange overlay doesn't flash either.
+
+## Agent-mode result capture (the contract is non-negotiable)
+
+The browser-use Agent's `final_result()` is unreliable — Qwen especially
+sometimes produces malformed text even when the form submitted cleanly.
+`_run_agent` therefore **always scrapes the result from the page DOM**
+after `agent.run()` returns. If the agent stalled before Submit / checkout,
+we click the deterministic selectors ourselves. This makes the `result`
+field on the terminator event identical between `scripted` and `agent`
+modes — callers never need to branch on which mode ran.
 
 ## Three ways to call
 
