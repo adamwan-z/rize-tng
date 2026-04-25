@@ -1,5 +1,7 @@
-import { readSales } from './readSales.js';
-import { readStock } from './readStock.js';
+import { analyzeRevenue } from './analyzeRevenue.js';
+import { analyzeStock } from './analyzeStock.js';
+import { analyzeRunway } from './analyzeRunway.js';
+import { suggestSupplyRun } from './suggestSupplyRun.js';
 import { matchGrants } from './matchGrants.js';
 import { runProcurementAgent } from './runProcurementAgent.js';
 import { runGrantAgent } from './runGrantAgent.js';
@@ -16,8 +18,10 @@ export type ToolHandler = (
 ) => AsyncGenerator<AgentEvent, unknown, void>;
 
 export const tools: Record<string, ToolHandler> = {
-  readSales,
-  readStock,
+  analyzeRevenue,
+  analyzeStock,
+  analyzeRunway,
+  suggestSupplyRun,
   matchGrants,
   runProcurementAgent,
   runGrantAgent,
