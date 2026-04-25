@@ -21,7 +21,7 @@ export function dispatchAgentCard({ toolName, input, result, status }: DispatchI
 
 function renderRevenue(raw: unknown) {
   const r = raw as {
-    period: string;
+    period: 'today' | '7d' | '30d';
     totalRm: number;
     count: number;
     avgTicketRm: number;
@@ -29,7 +29,8 @@ function renderRevenue(raw: unknown) {
   } | null;
   if (!r || typeof r.totalRm !== 'number') return null;
 
-  // Group transactions by day, take the last 7 days, normalize to 0..1.
+  // Bucket transactions by day so the sparkline always shows 7 bars even when
+  // the user asked for a longer or shorter window.
   const byDay = new Map<string, number>();
   for (const tx of r.transactions ?? []) {
     const day = tx.timestamp.slice(0, 10);
@@ -40,16 +41,38 @@ function renderRevenue(raw: unknown) {
   const series = normalizeForSparkline(
     recent.length === 7 ? recent : padLeft(recent, 7, 0),
   );
+
   const todayRm = recent[recent.length - 1] ?? r.totalRm;
   const yesterdayRm = recent[recent.length - 2] ?? todayRm;
-  const deltaPercent =
-    yesterdayRm > 0 ? ((todayRm - yesterdayRm) / yesterdayRm) * 100 : 0;
 
+  // Period-aware framing so the card never says "Today" for a 7d/30d query.
+  if (r.period === 'today') {
+    const deltaPercent =
+      yesterdayRm > 0 ? ((todayRm - yesterdayRm) / yesterdayRm) * 100 : undefined;
+    return (
+      <RevenueCard
+        eyebrow="Today · Kampung Baru"
+        totalRm={Number(todayRm.toFixed(2))}
+        {...(deltaPercent !== undefined && {
+          deltaPercent: Number(deltaPercent.toFixed(1)),
+          comparedTo: 'yesterday',
+        })}
+        orderCount={r.count}
+        series={series}
+      />
+    );
+  }
+
+  // 7d / 30d: show the cumulative total. Skip the delta pill because we have
+  // no prior-period total to compare against.
+  const eyebrow =
+    r.period === '7d'
+      ? 'Last 7 days · Kampung Baru'
+      : 'Last 30 days · Kampung Baru';
   return (
     <RevenueCard
-      totalRm={Number(todayRm.toFixed(2))}
-      deltaPercent={Number(deltaPercent.toFixed(1))}
-      comparedTo="yesterday"
+      eyebrow={eyebrow}
+      totalRm={Number(r.totalRm.toFixed(2))}
       orderCount={r.count}
       series={series}
     />
@@ -89,8 +112,8 @@ function renderGrants(raw: unknown) {
 function renderProcurement(input: Record<string, unknown>, status: 'running' | 'done') {
   // The LLM passes `items: [{ name, quantity }]`. The browser-agent has its
   // own per-line-item prices via the catalog, but those don't surface in the
-  // tool_result today (Lane B owns expanding the contract). Render what we
-  // have from the LLM's intent: name + qty without a price column.
+  // tool_result today (Lane B owns expanding the contract). Pass priceRm: 0
+  // and let ProcurementCard hide the price column when every item is 0.
   const rawItems = input.items as Array<{ name: string; quantity: number }> | undefined;
   if (!rawItems?.length) return null;
   const items = rawItems.map((it) => ({
