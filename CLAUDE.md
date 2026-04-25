@@ -105,7 +105,7 @@ Each lane has a folder. Do not write code outside your lane. If you need a contr
 - **No em dashes in any user-facing copy or docs.** Use periods, commas, or new sentences. House style.
 - **No double negatives.** Use positive framing.
 - **Mock data is realistic.** Malaysian names, KL addresses, RM amounts, real grant names. No "John Doe", no "$100".
-- **Chat copy is friendly Bahasa-Inggeris.** Drop in occasional Malay words ("alamak", "boleh", "macam mana"). Never use slang you are unsure about.
+- **Chat copy default register is friendly Bahasa-Inggeris** (the demo persona Mak Cik's voice). Drop in occasional Malay words ("alamak", "boleh", "macam mana"). The orchestrator mirrors the user's input language — English, Mandarin (普通话), or any Claude-supported language — so static FE chrome (Greeting, button labels) stays in BM but agent chat replies adapt. Never use slang you are unsure about.
 - **Imports come from `@tng-rise/shared`.** Do not duplicate types across services.
 - **Brand and visual tokens come from `apps/web/public/design-system.html`.** Lane A pulls colors, type, and component patterns from there. Pitch lifts type and palette from the same file.
 - **Tool errors do not crash the demo.** Wrap in try/catch and surface to the chat as a friendly message ("alamak, saya tak boleh buka Lotus sekarang"). Log the real error.

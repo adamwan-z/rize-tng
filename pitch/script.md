@@ -4,7 +4,7 @@ Target length: 4 minutes. 90 seconds of which is the live demo.
 
 ## Open (15s)
 
-> "Meet Mak Cik. She runs a nasi daging salai stall in Kampung Baru. She works 12-hour days. She uses TNG eWallet because her customers asked. She has heard of grants. She believes they are not for people like her."
+> "Meet Mak Cik Aminah. She runs Burger Bakar Mak Cik, a Ramly burger stall in Kampung Baru. She works 12-hour days. She uses TNG eWallet because her customers asked. She has heard of grants. She believes they are not for people like her."
 
 Pause. Slow.
 

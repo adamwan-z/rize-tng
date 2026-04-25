@@ -13,12 +13,11 @@ You are building the data and infra backbone for TNG Rise. Read `/CLAUDE.md`, `/
 The data you generate is what the LLM sees. If it is lazy, the agent's responses are lazy. Spend time making it feel like a real Malaysian stall.
 
 ## Mock TNG
-Express + TypeScript. Three endpoints:
+Express + TypeScript. Two endpoints:
 - `GET /merchant` returns `MerchantProfile`
 - `GET /transactions?days=30` returns `Transaction[]`
-- `GET /stock` returns `StockItem[]`
 
-Mak Cik's profile and stock are static JSON. Transactions are generated at request time using a date-seeded RNG so reruns within a day are reproducible while dates always look fresh on demo day. See `src/data/transactions.ts`.
+Mak Cik's profile is static JSON. Transactions are generated at request time using a date-seeded RNG so reruns within a day are reproducible while dates always look fresh on demo day. See `src/data/transactions.ts`. The CFO does not track inventory; stock is intentionally not exposed by mock-tng so the agent cannot drift into operational/COO territory.
 
 The transaction generator encodes:
 - Peak hours: 12 to 13:30 lunch, 18 to 19:30 dinner

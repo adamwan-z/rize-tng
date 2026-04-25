@@ -1,5 +1,7 @@
 # Orchestrator CFO Implementation Plan
 
+> **Historical record (2026-04-25).** This plan was executed and merged. **Subsequently superseded in part:** `analyzeStock` and all stock data have been removed. `suggestSupplyRun` is now dialog-driven (takes `items` from chat, no stock fetch). Tool inventory is 6, not 7. Plan tasks 9 (analyzeStock) and parts of task 11 (suggestSupplyRun stock dependency) no longer reflect the codebase. Use this doc for the original task structure and TDD shape, not for current contracts.
+
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
 **Goal:** Upgrade the orchestrator from 5 thin tools to 7 analytical tools so the agent behaves as a personal accountant for Mak Cik, with cashflow visibility, threshold-based proactive nudges, supply-list handoff, multi-turn memory, and 6 new prompt rules.

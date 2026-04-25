@@ -67,16 +67,6 @@ export const Transaction = z.object({
 });
 export type Transaction = z.infer<typeof Transaction>;
 
-// ===== Stock =====
-export const StockItem = z.object({
-  name: z.string(),
-  unit: z.string(),
-  currentQty: z.number(),
-  weeklyUsage: z.number(),
-  lastPriceRm: z.number(),
-});
-export type StockItem = z.infer<typeof StockItem>;
-
 // ===== Grant =====
 export const Grant = z.object({
   id: z.string(),
@@ -106,17 +96,16 @@ Owned by Lane B. Canonical prompt lives in `apps/orchestrator/src/agent/prompts.
 
 Summary of current behaviour (see also `docs/plans/2026-04-25-orchestrator-cfo-design.md` for rationale):
 
-- **Persona**: TNG Rise, friendly Bahasa-Inggeris accountant for Mak Cik. Never em dashes, never jargon.
-- **Tool inventory** (7 tools):
+- **Persona**: TNG Rise, the CFO for the smallest businesses. Default register is friendly Bahasa-Inggeris (Mak Cik's voice); mirrors any user-input language including Mandarin (普通话) and English. CFO-grade financial discipline for the demo persona Mak Cik; adapts to other TNG merchants who open in a different language. Never em dashes, never jargon.
+- **Tool inventory** (6 tools):
   - `analyzeRevenue(period)`: revenue analytics with trend, day-of-week, peak hours, alerts
-  - `analyzeStock()`: stock items with qualitative urgency band ('ok' / 'low' / 'critical') plus alerts
   - `analyzeRunway()`: cashflow position, profit qualitative band ('comfortable' / 'tight' / 'losing')
-  - `suggestSupplyRun()`: draft shopping list, emits `supply_list` handoff card
+  - `suggestSupplyRun({items})`: dialog-driven. Takes items the LLM gathered from Mak Cik in chat (name, qty, optional unit) and emits a `supply_list` handoff card. The CFO does not track inventory; this tool is a list-builder, not a stock checker.
   - `matchGrants()`: rule-based match against the grants KB
   - `runGrantAgent(grantId)`: hero flow, live browser fill of the application portal
-  - `runProcurementAgent(items)`: live Lotus browser, opt-in only via prompt rule
-- **Behaviour rules**: empathy first, accountant lane only (defer strategy questions), gentle verification, pronoun resolution, language match, tiered stock specificity, supply-run path defaults to `suggestSupplyRun`.
-- **Honesty rules**: qualitative-only for estimated metrics (no day-counts, no monthly cost amounts surfaced). For `analyzeRunway`, only `weeklyInflowRm` and `profitEstimate` are safe to mention.
+  - `runProcurementAgent(items)`: live Lotus browser. Triggered downstream of `suggestSupplyRun` via the supply-list card's CTA (FE wiring owned by Lane A).
+- **Behaviour rules**: empathy first, CFO lane only (surface the numbers, defer the call on operational/strategy questions), gentle verification, pronoun resolution, language match, resupply dialog (gather items from her, never invent), cadence awareness (ask once per session when she usually restocks).
+- **Honesty rules**: qualitative-only for estimated metrics (no monthly cost amounts surfaced). For `analyzeRunway`, only `weeklyInflowRm` and `profitEstimate` are safe to mention. The CFO has no view of inventory, so it never makes claims about what is in stock; it asks.
 - **Threshold-triggered nudges**: tools return language-agnostic alerts (`kind` + `urgency` + `context`); the LLM phrases them in the user's language. Per-session gate prevents repetition.
 
 ---
@@ -262,11 +251,10 @@ apps/orchestrator/
 │   ├── tools/
 │   │   ├── registry.ts              # Map tool name → handler
 │   │   ├── analyzeRevenue.ts        # Period revenue + trend + alerts
-│   │   ├── analyzeStock.ts          # Qualitative urgency band per item
 │   │   ├── analyzeRunway.ts         # Cashflow position + profit band
-│   │   ├── suggestSupplyRun.ts      # Draft shopping list, emits supply_list handoff
+│   │   ├── suggestSupplyRun.ts      # Dialog-driven list builder, emits supply_list handoff
 │   │   ├── matchGrants.ts           # Reads packages/grants-kb
-│   │   ├── runProcurementAgent.ts   # Live Lotus browser (opt-in path)
+│   │   ├── runProcurementAgent.ts   # Live Lotus browser, downstream of supply_list card
 │   │   └── runGrantAgent.ts
 │   ├── llm/
 │   │   ├── client.ts                # LLMClient interface
@@ -285,7 +273,7 @@ apps/orchestrator/
 
 - [x] `POST /chat` accepts `ChatRequest`, returns SSE stream of `AgentEvent`s
 - [x] LLM tool-use loop terminates correctly on `done` and on errors
-- [x] All seven tools registered and callable by the LLM (`analyzeRevenue`, `analyzeStock`, `analyzeRunway`, `suggestSupplyRun`, `matchGrants`, `runGrantAgent`, `runProcurementAgent`)
+- [x] All six tools registered and callable by the LLM (`analyzeRevenue`, `analyzeRunway`, `suggestSupplyRun`, `matchGrants`, `runGrantAgent`, `runProcurementAgent`)
 - [x] `LLM_PROVIDER` env var swaps Anthropic and Bedrock without code changes
 - [x] Tool call errors surface as `error` events, never crash the server
 - [x] System prompt loaded from `prompts.ts`
@@ -478,11 +466,10 @@ services/mock-tng/
 ├── package.json
 ├── Dockerfile
 └── src/
-    ├── server.ts                    # Express, GET /merchant, /transactions, /stock
+    ├── server.ts                    # Express, GET /merchant, /transactions
     ├── data/
     │   ├── profile.json             # Mak Cik
-    │   ├── transactions.json        # 30 days of believable QR receipts
-    │   └── stock.json
+    │   └── transactions.json        # 30 days of believable QR receipts
     └── routes.ts
 
 packages/grants-kb/
@@ -519,7 +506,7 @@ pitch/
 
 ## Acceptance criteria
 
-- [ ] Mock TNG returns Mak Cik's profile, 30 days of realistic transactions, current stock
+- [ ] Mock TNG returns Mak Cik's profile and 30 days of realistic transactions (no stock; the CFO does not track inventory)
 - [ ] Transaction amounts feel real: RM 8 to RM 35 for nasi orders, peak Friday lunch, slow Mondays
 - [ ] Grants KB has 5 real Malaysian grants (verified URLs and eligibility), at least one with `submission_method: "email"`
 - [ ] `docker compose up` brings all 4 services up cleanly
@@ -589,12 +576,11 @@ You are building the data and infra backbone for TNG Rise. Read `/CLAUDE.md`, `/
 The data you generate is what the LLM sees. If it is lazy, the agent's responses are lazy. Spend time making it feel like a real Malaysian stall.
 
 ## Mock TNG
-Express plus TypeScript. Three endpoints:
+Express plus TypeScript. Two endpoints:
 - `GET /merchant` returns `MerchantProfile`
 - `GET /transactions?days=30` returns `Transaction[]`
-- `GET /stock` returns `StockItem[]`
 
-Hard-code Mak Cik's data. Generate 30 days of transactions with realistic distribution: peak hours, slow Mondays, RM 12 average ticket, 5% week-over-week dip in the most recent week.
+Hard-code Mak Cik's data. Generate 30 days of transactions with realistic distribution: peak hours, slow Mondays, RM 12 average ticket, 5% week-over-week dip in the most recent week. Stock is intentionally not exposed: TNG Rise is the CFO, not the COO. Inventory awareness comes from chat dialog with Mak Cik (see `apps/orchestrator/src/agent/prompts.ts` resupply rules), not a data feed.
 
 ## Grants KB
 5 real Malaysian SME grants. Verify URLs work. Mix web_form (3 to 4) and email (1 to 2). Schema in `packages/shared/src/contracts.ts`.

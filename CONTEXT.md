@@ -18,7 +18,7 @@ We optimise for criteria 1, 4, and 5 hardest. 2 and 3 are table stakes.
 
 ## The persona
 
-**Mak Cik**, mid-50s, runs a Nasi Daging Salai stall in a KL neighbourhood. She accepts TNG QR payments because customers asked. She works 12-hour days. She closes the stall not because customers stop coming, but because she runs out of beef. She has heard of "grants" but assumes they are not for people like her.
+**Mak Cik Aminah**, mid-50s, runs Burger Bakar Mak Cik, a Ramly burger stall in Kampung Baru, KL. She accepts TNG QR payments because customers asked. She works 12-hour days. She closes the stall not because customers stop coming, but because she runs out of patties. She has heard of "grants" but assumes they are not for people like her.
 
 She is digitally literate enough to use WhatsApp and TNG eWallet. She sticks to flows she knows. She trusts text and conversation. She avoids forms.
 

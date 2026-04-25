@@ -126,7 +126,7 @@ async function mapNameToSku(name: string): Promise<string> {
     .map((p) => ({ p, score: tokenOverlap(name, p.name) }))
     .filter((x) => x.score > 0)
     .sort((a, b) => b.score - a.score);
-  if (scored.length > 0) return scored[0].p.sku;
+  if (scored.length > 0) return scored[0]!.p.sku;
   throw new Error(
     `No catalog match for "${name}". Available: ${catalog.map((p) => p.name).join(', ')}`,
   );

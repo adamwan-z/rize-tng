@@ -20,15 +20,6 @@ export const TOOL_SCHEMAS = [
     },
   },
   {
-    name: 'analyzeStock',
-    description:
-      'Get current stock levels with qualitative urgency band (ok / low / critical) per item plus alerts for items running low. Use when the user asks about stok, barang, restock, or what is running out. Never quote days-of-cover numbers; the urgency band is the safe-to-surface signal.',
-    input_schema: {
-      type: 'object' as const,
-      properties: {},
-    },
-  },
-  {
     name: 'analyzeRunway',
     description:
       'Compute the merchant cashflow position: weekly inflow, estimated weekly outflow, runway, and a qualitative profit band (comfortable / tight / losing). Use when the user asks about cashflow, untung, kos, kewangan, or whether the business is healthy. Only weeklyInflowRm and profitEstimate are safe to surface to the user; do not quote weeklyNet, runwayWeeks, breakevenRevenue, or any monthly cost amount.',
@@ -40,10 +31,25 @@ export const TOOL_SCHEMAS = [
   {
     name: 'suggestSupplyRun',
     description:
-      'Build a draft shopping list for items running low or critical. Returns suggested quantities and approximate costs, and emits a supply-list handoff card the user can act on. Use when the user asks about restock, supply run, beli barang, or after analyzeStock flags critical urgency.',
+      'Build a supply list handoff card from items the user has named in conversation. The CFO does not track inventory; gather the items and quantities from her in dialog before calling this. Use after she confirms what she wants to restock and how much.',
     input_schema: {
       type: 'object' as const,
-      properties: {},
+      properties: {
+        items: {
+          type: 'array',
+          items: {
+            type: 'object',
+            properties: {
+              name: { type: 'string', description: 'Item name as Mak Cik named it (e.g. "Ramly patty", "roti bun", "cheese slice")' },
+              qty: { type: 'number', description: 'Quantity she wants to buy' },
+              unit: { type: 'string', description: 'Optional unit (kg, packet, biji). Omit if she did not specify.' },
+            },
+            required: ['name', 'qty'],
+          },
+          description: 'Items confirmed by the user in dialog. Never invent items.',
+        },
+      },
+      required: ['items'],
     },
   },
   {

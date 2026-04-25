@@ -56,6 +56,7 @@ export const MerchantProfile = z.object({
     rent: z.number(),
     utilities: z.number(),
     gas: z.number(),
+    supplies: z.number(),
     other: z.number(),
   }),
 });
@@ -69,16 +70,6 @@ export const Transaction = z.object({
   customerRef: z.string(),
 });
 export type Transaction = z.infer<typeof Transaction>;
-
-// ===== Stock =====
-export const StockItem = z.object({
-  name: z.string(),
-  unit: z.string(),
-  currentQty: z.number(),
-  weeklyUsage: z.number(),
-  lastPriceRm: z.number(),
-});
-export type StockItem = z.infer<typeof StockItem>;
 
 // ===== Grant =====
 export const Grant = z.object({
@@ -119,10 +110,10 @@ export type BrowserStepEvent = z.infer<typeof BrowserStepEvent>;
 
 // ===== Alerts =====
 //
-// Returned by analytical tools (analyzeRevenue, analyzeStock, analyzeRunway,
-// suggestSupplyRun). Language-agnostic: the LLM phrases the alert in the
-// user's input language using `kind` and `context`. Never includes numbers
-// derived from estimated data (no daysLeft, no runway weeks).
+// Returned by analytical tools (analyzeRevenue, analyzeRunway).
+// Language-agnostic: the LLM phrases the alert in the user's input language
+// using `kind` and `context`. Never includes numbers derived from estimated
+// data (no runway weeks, no monthly cost amounts).
 export const Alert = z.object({
   kind: z.string(),
   urgency: z.enum(['info', 'warn', 'critical']),

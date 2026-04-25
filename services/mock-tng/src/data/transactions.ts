@@ -12,7 +12,7 @@ function mulberry32(seed: number) {
   };
 }
 
-// Hour weights modelling Mak Cik's stall: closed before 11, peaks lunch and dinner.
+// Hour weights modelling Mak Cik's burger stall: closed before 11, peaks lunch and dinner.
 const HOUR_WEIGHTS: Record<number, number> = {
   11: 0.4,
   12: 1.6,
@@ -39,12 +39,12 @@ const DAY_MULT: Record<number, number> = {
 };
 
 const ITEMS: Array<{ label: string; minRm: number; maxRm: number }> = [
-  { label: 'Nasi daging salai single', minRm: 9, maxRm: 12 },
-  { label: 'Nasi daging salai + telur', minRm: 11, maxRm: 14 },
-  { label: 'Set keluarga (2 orang)', minRm: 18, maxRm: 24 },
-  { label: 'Set keluarga (3 orang)', minRm: 26, maxRm: 32 },
-  { label: 'Daging salai topup', minRm: 8, maxRm: 12 },
-  { label: 'Air bandung + makan', minRm: 12, maxRm: 16 },
+  { label: 'Burger Ramly single', minRm: 5, maxRm: 7 },
+  { label: 'Burger Ramly + cheese', minRm: 7, maxRm: 9 },
+  { label: 'Burger special (cheese + telur)', minRm: 9, maxRm: 12 },
+  { label: 'Set burger 2 ekor', minRm: 12, maxRm: 16 },
+  { label: 'Set keluarga (4 burger)', minRm: 22, maxRm: 28 },
+  { label: 'Burger + air sirap', minRm: 8, maxRm: 11 },
 ];
 
 export function generateTransactions(now: Date, days = 30): Transaction[] {

@@ -1,8 +1,8 @@
 {
   "id": "mak-cik-aminah-001",
   "name": "Aminah binti Hassan",
-  "businessName": "Nasi Daging Salai Mak Cik",
-  "businessType": "Hawker F&B (Malay cuisine)",
+  "businessName": "Burger Bakar Mak Cik",
+  "businessType": "Hawker F&B (Ramly burger stall)",
   "location": {
     "city": "Kampung Baru, Kuala Lumpur",
     "state": "Wilayah Persekutuan Kuala Lumpur"
@@ -14,6 +14,7 @@
     "rent": 800,
     "utilities": 200,
     "gas": 350,
+    "supplies": 4200,
     "other": 300
   }
 }

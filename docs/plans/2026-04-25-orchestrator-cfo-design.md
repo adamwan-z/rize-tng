@@ -1,5 +1,7 @@
 # Orchestrator CFO design
 
+> **Historical record (2026-04-25).** Captures the original CFO upgrade design. **Subsequently superseded in part:** the `analyzeStock` tool and all stock data have been removed (CFO does not track inventory; resupply is dialog-driven via `suggestSupplyRun({items})`). Treat this doc as the rationale for the cashflow/runway/grants spine. For current tool inventory and prompt rules, read `IMPLEMENTATION.md` and `apps/orchestrator/src/agent/prompts.ts`.
+
 ## Context
 
 The orchestrator originally exposed five tools: `readSales`, `readStock`, `matchGrants`, `runProcurementAgent`, `runGrantAgent`. The first two were thin pass-throughs to mock-tng. The agent answered narrowly when asked but did not behave like the personal CFO promised in `CONTEXT.md`. This design upgrades the orchestrator into a true accountant-grade brain that surfaces cashflow visibility, anticipates problems before they happen, and offers honest advice grounded in measured data. The grant flow remains the live demo hero. Lane C has since shipped live browser integration; the orchestrator exposes both `suggestSupplyRun` (default safe handoff) and `runProcurementAgent` (opt-in live Lotus path) as a result.

@@ -2,11 +2,11 @@
 
 ## Who she is
 
-Aminah binti Hassan. Mid-50s. Lives in Kampung Baru, KL. Runs a Nasi Daging Salai stall along the corridor that comes alive after Maghrib. Her stall has been there for two years. She uses TNG eWallet because customers asked for QR pay around the same time the night market started accepting it.
+Aminah binti Hassan. Mid-50s. Lives in Kampung Baru, KL. Runs Burger Bakar Mak Cik, a Ramly burger stall along the corridor that comes alive after Maghrib. Her stall has been there for two years. She uses TNG eWallet because customers asked for QR pay around the same time the night market started accepting it.
 
 ## A day in her life
 
-She opens at 11 AM. Lunch peak from 12:30 to 1:30. Afternoon lull. Re-opens for dinner from 6 to 9. Dinner peak 6 to 7:30. She closes when the daging salai runs out, which is usually before 9 on Fridays and Saturdays, sometimes earlier on payday weekends.
+She opens at 11 AM. Lunch peak from 12:30 to 1:30. Afternoon lull. Re-opens for dinner from 6 to 9. Dinner peak 6 to 7:30. She closes when the patties run out, which is usually before 9 on Fridays and Saturdays, sometimes earlier on payday weekends.
 
 She knows roughly how the day went by what is left in the tray. She does not know if this month is better or worse than last month.
 

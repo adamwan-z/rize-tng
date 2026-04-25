@@ -27,21 +27,21 @@ from .lotus_procurement import run_lotus_procurement
 
 
 _DEMO_PROFILE: dict[str, Any] = {
-    "full_name": "Siti binti Hassan",
-    "nric": "740512-10-5234",
-    "mobile": "012-3456789",
-    "email": "siti.nasilemak@gmail.com",
-    "business_name": "Sitis Nasi Lemak Klang",
-    "business_reg_no": "JM0892341-K",
+    "full_name": "Aminah binti Hassan",
+    "nric": "700815-14-5238",
+    "mobile": "012-3457821",
+    "email": "burger.bakar.makcik@gmail.com",
+    "business_name": "Burger Bakar Mak Cik",
+    "business_reg_no": "JM0823491-W",
     "business_type": "F&B",
-    "business_address": "Lot 23, Jalan Klang Lama, Pandamaran, 41200 Klang, Selangor",
+    "business_address": "Lot 12, Jalan Raja Muda Musa, Kampung Baru, 50300 Kuala Lumpur",
     "years_operating": 8,
     "employee_count": 3,
-    "annual_revenue": 60000,
+    "annual_revenue": 177600,
     "requested_amount": 50000,
     "purpose": (
-        "Expand to a permanent stall location with proper kitchen equipment, "
-        "hire two additional staff, develop branded packaging."
+        "Upgrade from open-air pushcart to a permanent kiosk with proper grill, "
+        "hire two additional staff, and procure a chiller to reduce daily Lotus runs."
     ),
 }
 

@@ -1,5 +1,7 @@
 # Browser-agent API design
 
+> **Historical record (2026-04-25).** Captures the original Lane C API spec. **Persona examples in this doc are stale:** the "Siti binti Hassan / Sitis Nasi Lemak Klang" demo profile has been retired in favour of the single repo-wide persona "Aminah binti Hassan / Burger Bakar Mak Cik / Kampung Baru". The API contracts and Pydantic shapes remain authoritative; only the example values are out of date. See `services/browser-agent/src/flows/__main__.py` and root `README.md` for current sample data.
+
 > Lane C runner becomes a clean, independently-callable service. Three usage modes (HTTP, Python import, CLI) over one core function per flow. Strict input validation. Loose coupling: depends on inputs in, yields events out.
 
 ## Goals

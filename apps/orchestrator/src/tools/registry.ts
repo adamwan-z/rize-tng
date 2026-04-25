@@ -1,5 +1,4 @@
 import { analyzeRevenue } from './analyzeRevenue.js';
-import { analyzeStock } from './analyzeStock.js';
 import { analyzeRunway } from './analyzeRunway.js';
 import { suggestSupplyRun } from './suggestSupplyRun.js';
 import { matchGrants } from './matchGrants.js';
@@ -20,7 +19,6 @@ export type ToolHandler = (
 
 export const tools: Record<string, ToolHandler> = {
   analyzeRevenue,
-  analyzeStock,
   analyzeRunway,
   suggestSupplyRun,
   matchGrants,

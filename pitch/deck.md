@@ -9,11 +9,11 @@ Personal CFO untuk usahawan kecil.
 
 Logo, team names, hackathon date.
 
-## 2. Meet Mak Cik
+## 2. Meet Mak Cik Aminah
 
-Photo. Three stats:
+Photo of Burger Bakar Mak Cik in Kampung Baru. Three stats:
 - 12-hour days
-- Closes when the daging runs out, not when customers stop coming
+- Closes when the patties run out, not when customers stop coming
 - Heard of grants. Believes they are not for people like her.
 
 ## 3. The gap

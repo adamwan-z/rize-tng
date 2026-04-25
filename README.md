@@ -83,19 +83,19 @@ curl -N -X POST http://localhost:5001/run/grant_application \
   -H 'Content-Type: application/json' \
   -d '{
     "profile": {
-      "full_name": "Siti binti Hassan",
-      "nric": "740512-10-5234",
-      "mobile": "012-3456789",
-      "email": "siti@example.com",
-      "business_name": "Siti Nasi Lemak",
-      "business_reg_no": "JM0892341-K",
+      "full_name": "Aminah binti Hassan",
+      "nric": "700815-14-5238",
+      "mobile": "012-3457821",
+      "email": "burger.bakar.makcik@gmail.com",
+      "business_name": "Burger Bakar Mak Cik",
+      "business_reg_no": "JM0823491-W",
       "business_type": "F&B",
-      "business_address": "Lot 23, Jalan Klang Lama, 41200 Klang",
+      "business_address": "Lot 12, Jalan Raja Muda Musa, Kampung Baru, 50300 Kuala Lumpur",
       "years_operating": 8,
       "employee_count": 3,
-      "annual_revenue": 60000,
+      "annual_revenue": 177600,
       "requested_amount": 50000,
-      "purpose": "Expand to a permanent stall location."
+      "purpose": "Upgrade from open-air pushcart to a permanent kiosk with a chiller."
     },
     "mode": "scripted"
   }'
@@ -121,7 +121,7 @@ from src.flows.grant_application import run_grant_application
 
 async for event in run_grant_application(
     run_id="local-1",
-    profile={"full_name": "Siti binti Hassan", ...},
+    profile={"full_name": "Aminah binti Hassan", ...},
     application_url="http://localhost:5050/grant.html",
     mode="scripted",
 ):
@@ -135,7 +135,7 @@ path uses, so direct callers cannot bypass validation.
 
 ```bash
 cd services/browser-agent
-uv run python -m src.flows grant --mock                 # default Aunty Siti profile
+uv run python -m src.flows grant --mock                 # default Mak Cik Aminah profile
 uv run python -m src.flows grant --profile p.json --mode agent
 uv run python -m src.flows lotus --mock                 # default 8-item shopping list
 uv run python -m src.flows lotus --items shop.json --mode scripted
@@ -184,9 +184,9 @@ Every line in the response stream is one `StepEvent`:
 ```jsonc
 {"runId":"a1...","step":1,"description":"Buka portal grant tekun-mikro","screenshotUrl":"..."}
 {"runId":"a1...","step":2,"description":"Step 1/3 Applicant","screenshotUrl":"..."}
-{"runId":"a1...","step":3,"description":"Masukkan nama: Siti binti Hassan","screenshotUrl":"..."}
+{"runId":"a1...","step":3,"description":"Masukkan nama: Aminah binti Hassan","screenshotUrl":"..."}
 {"runId":"a1...","step":4,"description":"Step 2/3 Business info","screenshotUrl":"..."}
-{"runId":"a1...","step":5,"description":"Masukkan SSM: JM0892341-K","screenshotUrl":"..."}
+{"runId":"a1...","step":5,"description":"Masukkan SSM: JM0823491-W","screenshotUrl":"..."}
 {"runId":"a1...","step":6,"description":"Step 3/3 Funding details","screenshotUrl":"..."}
 {"runId":"a1...","step":7,"description":"Borang lengkap. Submitting.","screenshotUrl":"..."}
 {"runId":"a1...","step":8,"description":"Submitted. Reference: TER-2026-04-8821","screenshotUrl":"..."}
