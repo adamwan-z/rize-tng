@@ -1,0 +1,43 @@
+{
+  "flow": "itekad_application",
+  "recordedAt": "2026-04-26T14:00:00+08:00",
+  "target": "iTEKAD email submission via Gmail mock (illustrative replica served from mock-tng if live unavailable)",
+  "steps": [
+    {
+      "description": "Generate iTEKAD application pack (PDF) from TnG settlement data.",
+      "screenshotUrl": "https://placehold.co/1280x720/005BAA/FFFFFF/png?text=Step+1+%7C+Generate+PDF"
+    },
+    {
+      "description": "Render PDF preview HTML, ready to attach.",
+      "screenshotUrl": "https://placehold.co/1280x720/005BAA/FFFFFF/png?text=Step+2+%7C+Preview+HTML"
+    },
+    {
+      "description": "Show 3 pages of the application pack to Mak Cik.",
+      "screenshotUrl": "https://placehold.co/1280x720/FF6B35/FFFFFF/png?text=Step+3+%7C+Preview+pages"
+    },
+    {
+      "description": "Buka Gmail iTEKAD inbox.",
+      "screenshotUrl": "https://placehold.co/1280x720/FF6B35/FFFFFF/png?text=Step+4+%7C+Gmail+inbox"
+    },
+    {
+      "description": "Klik Compose.",
+      "screenshotUrl": "https://placehold.co/1280x720/FF6B35/FFFFFF/png?text=Step+5+%7C+Compose"
+    },
+    {
+      "description": "Recipient: ekad@bnm.gov.my. Subject: iTEKAD application.",
+      "screenshotUrl": "https://placehold.co/1280x720/FF6B35/FFFFFF/png?text=Step+6+%7C+Recipient"
+    },
+    {
+      "description": "Type email body. Cashflow summary, requested amount, attachments noted.",
+      "screenshotUrl": "https://placehold.co/1280x720/FF6B35/FFFFFF/png?text=Step+7+%7C+Body"
+    },
+    {
+      "description": "Attach application_pack.pdf (3 pages).",
+      "screenshotUrl": "https://placehold.co/1280x720/FF6B35/FFFFFF/png?text=Step+8+%7C+Attach"
+    },
+    {
+      "description": "Email sent to ekad@bnm.gov.my.",
+      "screenshotUrl": "https://placehold.co/1280x720/008443/FFFFFF/png?text=Step+9+%7C+Sent+%E2%9C%93"
+    }
+  ]
+}

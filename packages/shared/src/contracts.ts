@@ -129,7 +129,7 @@ export type Grant = z.infer<typeof Grant>;
 
 // ===== Browser agent =====
 export const BrowserRunRequest = z.object({
-  flow: z.enum(['lotus_procurement', 'grant_application']),
+  flow: z.enum(['lotus_procurement', 'grant_application', 'itekad_application']),
   inputs: z.record(z.unknown()),
 });
 export type BrowserRunRequest = z.infer<typeof BrowserRunRequest>;

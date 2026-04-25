@@ -99,4 +99,8 @@ When runGrantAgent finishes, the form is already submitted on Mak Cik's behalf. 
 
 When other flows end, write a short closing message that tells her what to do next.
 
-Some grants are submitted by email rather than a web form. If matchGrants returns a grant with submissionMethod="email", write that you will draft the email for her to send. Do not try to open a browser for email-submission grants.`;
+Second grant follow-up:
+matchGrants is rotation-aware. The first call surfaces SME Growth Fund. A subsequent call (after Mak Cik has already engaged with the first grant) surfaces iTEKAD. The tool result includes isFollowUp=true on the second call. When isFollowUp is true, frame the new grant as an additional option ("Sebenarnya ada satu lagi geran Mak Cik layak juga..." / "There's another grant Mak Cik also qualifies for...") rather than introducing it cold.
+
+Email-submission grants (iTEKAD):
+Some grants are submitted by email instead of a web form (submissionMethod="email"). For these, runGrantAgent drives a real Gmail browser session: it generates a PDF application pack from her TnG settlement data, previews each page on screen, then composes the email, attaches the PDF, and clicks Send on her behalf. You still call runGrantAgent(grantId) the same way. After it finishes, the tool result will include sentTo and sentAttachment instead of a referenceNumber. Your closing message should confirm the email is sent (mention sentTo) and that iTEKAD will reply within their normal turnaround. Keep it 1 to 2 short sentences.`;

@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Any
 
 from .grant_application import run_grant_application
+from .itekad_application import run_itekad_application
 from .lotus_procurement import run_lotus_procurement
 
 
@@ -45,6 +46,28 @@ _DEMO_PROFILE: dict[str, Any] = {
     ),
 }
 
+_DEMO_ITEKAD_REQUEST: dict[str, Any] = {
+    "profile": {
+        "id": "mak-cik-aminah-001",
+        "name": "Aminah binti Hassan",
+        "businessName": "Burger Bakar Mak Cik",
+        "businessType": "Hawker F&B (Ramly burger stall)",
+        "location_city": "Kampung Baru, Kuala Lumpur",
+        "location_state": "Wilayah Persekutuan Kuala Lumpur",
+        "registeredSince": "2024-03-12",
+        "ssm": "JM0823491-W",
+        "monthlyRevenueRm": 14800,
+        "monthlyCostsRm": {
+            "rent": 800,
+            "utilities": 200,
+            "gas": 350,
+            "supplies": 4200,
+            "other": 300,
+        },
+    },
+}
+
+
 _DEMO_SHOPPING_LIST: list[dict[str, Any]] = [
     {"sku": "RAMLY-BEEF-12", "quantity": 2},
     {"sku": "GARD-BURG-6", "quantity": 4},
@@ -65,6 +88,23 @@ async def _run_grant(args: argparse.Namespace) -> int:
         application_url=args.url,
         grant_id=args.grant_id,
         mode=args.mode,
+    ):
+        print(json.dumps(event), flush=True)
+    return 0
+
+
+async def _run_itekad(args: argparse.Namespace) -> int:
+    request = (
+        _DEMO_ITEKAD_REQUEST
+        if args.mock
+        else json.loads(Path(args.request).read_text())
+    )
+    if args.mode == "agent":
+        request["mode"] = "agent"
+    async for event in run_itekad_application(
+        run_id=str(uuid.uuid4()),
+        request=request,
+        grant_id=args.grant_id,
     ):
         print(json.dumps(event), flush=True)
     return 0
@@ -97,6 +137,12 @@ def main(argv: list[str] | None = None) -> int:
     l.add_argument("--items", type=str, help="Path to items JSON")
     l.add_argument("--mode", choices=["scripted", "agent"], default="scripted")
 
+    i = sub.add_parser("itekad", help="Run iTEKAD email-submission flow")
+    i.add_argument("--mock", action="store_true", help="Use demo Mak Cik profile")
+    i.add_argument("--request", type=str, help="Path to ItekadApplicationRequest JSON")
+    i.add_argument("--grant-id", type=str, default="itekad-bnm")
+    i.add_argument("--mode", choices=["scripted", "agent"], default="scripted")
+
     args = parser.parse_args(argv)
 
     if args.flow == "grant":
@@ -107,6 +153,10 @@ def main(argv: list[str] | None = None) -> int:
         if not args.mock and not args.items:
             parser.error("lotus requires --mock or --items")
         return asyncio.run(_run_lotus(args))
+    if args.flow == "itekad":
+        if not args.mock and not args.request:
+            parser.error("itekad requires --mock or --request")
+        return asyncio.run(_run_itekad(args))
     parser.error(f"Unknown flow: {args.flow}")
     return 2
 

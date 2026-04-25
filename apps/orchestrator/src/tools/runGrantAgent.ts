@@ -10,23 +10,63 @@ export const runGrantAgent: ToolHandler = async function* (input) {
     throw new Error(`Unknown grant id: ${grantId}`);
   }
 
-  // Email-submission grants short-circuit the browser agent. We render a mailto
-  // handoff card with the email body interpolated from the merchant profile.
+  // Email-submission grants drive the Gmail mock end-to-end. Generate the
+  // application pack PDF, preview it in-browser, fill the compose draft,
+  // attach, and click Send. The browser-agent service handles all of that.
   if (grant.submissionMethod === 'email') {
     const profile = await fetchProfile();
-    const subject = interpolate(grant.emailTemplate?.subject ?? '', profile);
-    const body = interpolate(grant.emailTemplate?.body ?? '', profile);
-    yield {
-      type: 'handoff',
-      kind: 'email',
-      payload: {
-        to: grant.applicationEmail,
-        subject,
-        body,
-        grantName: grant.name,
+    const itekadRequest = {
+      profile: {
+        id: profile.id,
+        name: profile.name,
+        businessName: profile.businessName,
+        businessType: profile.businessType,
+        location_city: profile.location.city,
+        location_state: profile.location.state,
+        registeredSince: profile.registeredSince,
+        ssm: profile.ssm,
+        monthlyRevenueRm: profile.monthlyRevenueRm,
+        monthlyCostsRm: profile.monthlyCostsRm,
       },
+      email_to: grant.applicationEmail ?? 'ekad@bnm.gov.my',
+      mode: (input.mode as 'scripted' | 'agent' | undefined) ?? 'scripted',
     };
-    return { ok: true, kind: 'email', grantId };
+
+    const emailRes = await fetch(`${env.BROWSER_AGENT_URL}/run/itekad_application`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(itekadRequest),
+    });
+    if (!emailRes.ok || !emailRes.body) {
+      const detail = emailRes.body ? await emailRes.text() : '';
+      throw new Error(
+        `browser-agent /run/itekad_application returned ${emailRes.status} ${detail}`,
+      );
+    }
+
+    let sentTo: string | null = null;
+    let sentSubject: string | null = null;
+    let sentAttachment: string | null = null;
+    for await (const event of forwardBrowserStream(emailRes.body)) {
+      if (event.result) {
+        const r = event.result as Record<string, unknown>;
+        if (typeof r.sentTo === 'string') sentTo = r.sentTo;
+        if (typeof r.sentSubject === 'string') sentSubject = r.sentSubject;
+        if (typeof r.sentAttachment === 'string') sentAttachment = r.sentAttachment;
+      }
+      const { result: _result, ...forFe } = event;
+      yield forFe as AgentEvent;
+    }
+
+    return {
+      ok: true,
+      kind: 'email',
+      grantId,
+      grantName: grant.name,
+      sentTo,
+      sentSubject,
+      sentAttachment,
+    };
   }
 
   // Web form grants: kick off the browser agent and forward steps.
@@ -107,21 +147,6 @@ function yearsSince(isoDate: string): number {
   const start = new Date(isoDate).getTime();
   if (Number.isNaN(start)) return 1;
   return Math.max(1, Math.floor((Date.now() - start) / (365 * 24 * 60 * 60 * 1000)));
-}
-
-function interpolate(template: string, profile: MerchantProfile): string {
-  return template.replace(/\{\{([^}]+)\}\}/g, (_, key: string) => {
-    const path = key.trim().split('.');
-    let value: unknown = profile;
-    for (const segment of path) {
-      if (value && typeof value === 'object' && segment in value) {
-        value = (value as Record<string, unknown>)[segment];
-      } else {
-        return '';
-      }
-    }
-    return String(value ?? '');
-  });
 }
 
 // The orchestrator's AgentEvent.browser_step shape only declares the fields

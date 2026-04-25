@@ -29,12 +29,17 @@ from fastapi.responses import JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 
 from .flows.grant_application import run_grant_application
+from .flows.itekad_application import run_itekad_application
 from .flows.lotus_procurement import (
     close_lotus_run,
     complete_lotus_checkout,
     run_lotus_procurement,
 )
-from .flows.types import GrantApplicationRequest, LotusProcurementRequest
+from .flows.types import (
+    GrantApplicationRequest,
+    ItekadApplicationRequest,
+    LotusProcurementRequest,
+)
 from .lib.catalog import CatalogUnavailable
 
 app = FastAPI(title="tng-rise browser agent")
@@ -78,6 +83,21 @@ async def run_grant(req: GrantApplicationRequest) -> StreamingResponse:
                 application_url=req.application_url,
                 grant_id=req.grant_id,
                 mode=req.mode,
+            )
+        ),
+        media_type="application/x-ndjson",
+    )
+
+
+@app.post("/run/itekad_application")
+async def run_itekad(req: ItekadApplicationRequest) -> StreamingResponse:
+    run_id = str(uuid.uuid4())
+    return StreamingResponse(
+        _stream(
+            run_itekad_application(
+                run_id=run_id,
+                request=req,
+                grant_id="itekad-bnm",
             )
         ),
         media_type="application/x-ndjson",

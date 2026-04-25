@@ -1,0 +1,19 @@
+{
+  "id": "itekad-bnm",
+  "name": "iTEKAD Micro-Enterprise Financing 2026",
+  "agency": "Bank Negara Malaysia",
+  "description": "Pembiayaan mikro sehingga RM 50,000 untuk micro-enterprise yang nak naik taraf dari pushcart ke kiosk tetap. Disalurkan melalui Financial Institutions yang dilantik BNM.",
+  "maxAmountRm": 50000,
+  "eligibility": [
+    "Pemilik perniagaan B40 atau micro-entrepreneur yang aktif",
+    "Perniagaan berdaftar di Malaysia (SSM)",
+    "Sektor F&B, retail, atau perkhidmatan layak",
+    "Ada track record cashflow boleh disahkan (cth: TnG eWallet settlement data)"
+  ],
+  "submissionMethod": "email",
+  "applicationEmail": "ekad@bnm.gov.my",
+  "emailTemplate": {
+    "subject": "iTEKAD Application - {{businessName}} (RM 50,000 micro-financing)",
+    "body": "Dear iTEKAD Team,\n\nSubmitting an application for micro-enterprise financing under iTEKAD on behalf of {{name}}, owner of {{businessName}} ({{location.city}}, {{location.state}}).\n\nThe full application pack is attached.\n\nBest regards,\nTNG Rise (on behalf of {{name}})"
+  }
+}

@@ -11,6 +11,10 @@ type Session = {
   // the start of the next /chat turn (i.e. when Mak Cik replies). Gates
   // acceptFinancingTerms so the LLM cannot auto-approve in the same turn.
   pendingFinancingApprovalRunId: string | null;
+  // Incremented every time matchGrants runs in this session. The first call
+  // surfaces SME Growth Fund; the second call surfaces iTEKAD as the next
+  // grant Mak Cik qualifies for, so the LLM can frame it as "satu lagi geran".
+  matchGrantsCallCount: number;
 };
 
 const sessions = new Map<string, Session>();
@@ -18,7 +22,12 @@ const sessions = new Map<string, Session>();
 export function getSession(id: string): Session {
   let s = sessions.get(id);
   if (!s) {
-    s = { messages: [], firedAlerts: new Set(), pendingFinancingApprovalRunId: null };
+    s = {
+      messages: [],
+      firedAlerts: new Set(),
+      pendingFinancingApprovalRunId: null,
+      matchGrantsCallCount: 0,
+    };
     sessions.set(id, s);
   }
   return s;
@@ -46,6 +55,12 @@ export function alertAlreadyFired(id: string, key: string): boolean {
 
 export function markAlertFired(id: string, key: string): void {
   getSession(id).firedAlerts.add(key);
+}
+
+export function bumpMatchGrantsCallCount(id: string): number {
+  const s = getSession(id);
+  s.matchGrantsCallCount += 1;
+  return s.matchGrantsCallCount;
 }
 
 export function clearSession(id: string): void {
