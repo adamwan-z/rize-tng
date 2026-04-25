@@ -1,0 +1,49 @@
+{
+  "family": "tng-rise-orchestrator",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/tngRiseTaskExecution",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/tngRiseTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "orchestrator",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/tng-rise/orchestrator:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "name": "orchestrator-4000",
+          "containerPort": 4000,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "4000" },
+        { "name": "NODE_ENV", "value": "production" },
+        { "name": "LOG_LEVEL", "value": "info" },
+        { "name": "LLM_PROVIDER", "value": "bedrock" },
+        { "name": "LLM_MODEL", "value": "claude-sonnet-4-6" },
+        { "name": "AWS_REGION", "value": "${AWS_REGION}" },
+        { "name": "BEDROCK_MODEL_ID", "value": "anthropic.claude-sonnet-4-6" },
+        { "name": "MOCK_TNG_URL", "value": "http://mock-tng.tng-rise.local:5050" },
+        { "name": "BROWSER_AGENT_URL", "value": "http://browser-agent.tng-rise.local:5001" }
+      ],
+      "secrets": [
+        {
+          "name": "ANTHROPIC_API_KEY",
+          "valueFrom": "arn:aws:secretsmanager:${AWS_REGION}:${AWS_ACCOUNT_ID}:secret:tng-rise/anthropic-key"
+        }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/tng-rise/orchestrator",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "family": "tng-rise-mock-tng",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "256",
+  "memory": "512",
+  "executionRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/tngRiseTaskExecution",
+  "taskRoleArn": "arn:aws:iam::${AWS_ACCOUNT_ID}:role/tngRiseTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "mock-tng",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/tng-rise/mock-tng:latest",
+      "essential": true,
+      "portMappings": [
+        {
+          "name": "mock-tng-5050",
+          "containerPort": 5050,
+          "protocol": "tcp",
+          "appProtocol": "http"
+        }
+      ],
+      "environment": [
+        { "name": "PORT", "value": "5050" },
+        { "name": "NODE_ENV", "value": "production" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/tng-rise/mock-tng",
+          "awslogs-region": "${AWS_REGION}",
+          "awslogs-stream-prefix": "ecs"
+        }
+      }
+    }
+  ]
+}

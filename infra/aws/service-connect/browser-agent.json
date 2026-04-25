@@ -1,0 +1,13 @@
+{
+  "enabled": true,
+  "namespace": "tng-rise.local",
+  "services": [
+    {
+      "portName": "browser-agent-5001",
+      "discoveryName": "browser-agent",
+      "clientAliases": [
+        { "port": 5001, "dnsName": "browser-agent.tng-rise.local" }
+      ]
+    }
+  ]
+}
