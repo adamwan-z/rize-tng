@@ -193,16 +193,6 @@ patterns/
 └── shared/       # Pull Requests
 ```
 
-## Pattern Files
-
-Patterns are organized by domain in `.claude/patterns/`:
-
-```
-patterns/
-├── frontend/     # DataTables, Dialogs, Page Layout, Schemas
-├── backend/      # Domain Structure, Routes, Migrations, Testing
-└── shared/       # Pull Requests
-```
 ## Hard rules
 
 1. **Never fake a tool call.** If the LLM is supposed to call `matchGrants`, it must actually call the function. Theatre fails when judges ask how it works.
