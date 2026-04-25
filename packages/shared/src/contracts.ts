@@ -86,6 +86,15 @@ export const MerchantProfile = z.object({
   }),
   cashOnHandRm: z.number(),
   tngFinancing: TngFinancingTerms.optional(),
+  weeklySupplyRun: z
+    .array(
+      z.object({
+        sku: z.string(),
+        name: z.string(),
+        quantity: z.number(),
+      }),
+    )
+    .optional(),
 });
 export type MerchantProfile = z.infer<typeof MerchantProfile>;
 

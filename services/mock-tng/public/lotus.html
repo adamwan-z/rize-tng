@@ -1259,7 +1259,10 @@ function getFilteredProducts() {
   if (!q) return PRODUCTS;
   const tokens = q.split(/\s+/);
   return PRODUCTS.filter(p => {
-    const haystack = (p.name + " " + p.brand).toLowerCase();
+    // Include sku so SKU-prefix searches from the browser agent (e.g. "ladys"
+    // for LADYS-MAYO-470) match even when the apostrophe in "Lady's" breaks
+    // the substring match against the product name.
+    const haystack = (p.name + " " + p.brand + " " + p.sku).toLowerCase();
     return tokens.every(t => haystack.includes(t));
   });
 }

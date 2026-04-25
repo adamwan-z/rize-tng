@@ -18,6 +18,16 @@
     "other": 300
   },
   "cashOnHandRm": 10,
+  "weeklySupplyRun": [
+    { "sku": "RAMLY-BEEF-12", "name": "Ramly Beef Patty (12pcs pack)", "quantity": 2 },
+    { "sku": "GARD-BURG-6", "name": "Gardenia Hamburger Buns (6pcs pack)", "quantity": 4 },
+    { "sku": "KRAFT-CHED-24", "name": "Kraft Cheddar Cheese Slices (24pcs)", "quantity": 1 },
+    { "sku": "EGG-GRADE-A-30", "name": "Fresh Eggs Grade A (30pcs)", "quantity": 1 },
+    { "sku": "PLANTA-MARG-480", "name": "Planta Margarine 480g", "quantity": 1 },
+    { "sku": "LADYS-MAYO-470", "name": "Lady's Choice Mayonnaise 470ml", "quantity": 1 },
+    { "sku": "MAGGI-CHIL-750", "name": "Maggi Chilli Sauce 750g", "quantity": 1 },
+    { "sku": "SAJI-OIL-5KG", "name": "Saji Cooking Oil 5kg", "quantity": 1 }
+  ],
   "tngFinancing": {
     "productName": "SOS Credit",
     "providerName": "TNG Digital Sdn Bhd",
