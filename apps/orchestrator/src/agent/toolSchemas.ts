@@ -58,7 +58,7 @@ export const TOOL_SCHEMAS = [
   {
     name: 'runProcurementAgent',
     description:
-      'Open Lotus supermarket and add ingredients to cart. Stops before payment so the merchant pays themselves. Returns when the cart is ready.',
+      'Open Lotus supermarket and add ingredients to cart. Stops at the checkout page with the live browser kept open and returns runId, items, subtotal, and total. After this returns you MUST restate the cart and total to the merchant in chat and ask for explicit confirmation. Do not assume she wants to checkout; wait for her reply, then call confirmProcurementCheckout(runId).',
     input_schema: {
       type: 'object' as const,
       properties: {
@@ -76,6 +76,21 @@ export const TOOL_SCHEMAS = [
         },
       },
       required: ['items'],
+    },
+  },
+  {
+    name: 'confirmProcurementCheckout',
+    description:
+      'Resume a paused Lotus run and place the order. Clicks Place Order on the live browser kept open by runProcurementAgent, captures the order reference, then closes the browser. Use ONLY after runProcurementAgent has returned with a runId AND the merchant has explicitly confirmed in her next message (yes / boleh / confirm / proceed / ok). Never call this on your own.',
+    input_schema: {
+      type: 'object' as const,
+      properties: {
+        runId: {
+          type: 'string',
+          description: 'The runId returned by runProcurementAgent.',
+        },
+      },
+      required: ['runId'],
     },
   },
   {

@@ -3,11 +3,19 @@ import { DeclineCard } from '../agent/DeclineCard.js';
 import { ReviewSubmitHandoff } from './ReviewSubmitHandoff.js';
 import { EmailHandoff } from './EmailHandoff.js';
 import { SupplyListHandoff } from './SupplyListHandoff.js';
+import { ProcurementConfirmHandoff } from './ProcurementConfirmHandoff.js';
 
-// Lane B has widened the shared union to include 'supply_list' (this branch).
-// Lane A still keeps 'decline' as a local widening pending a contract update.
-// Once Lane B adds 'decline' to AgentEvent.handoff.kind, drop this alias.
-type HandoffKind = 'payment' | 'review_submit' | 'email' | 'decline' | 'supply_list';
+// Lane B has widened the shared union to include 'supply_list' and
+// 'procurement_confirm' (this branch). Lane A still keeps 'decline' as a
+// local widening pending a contract update. Once Lane B adds 'decline' to
+// AgentEvent.handoff.kind, drop the alias.
+type HandoffKind =
+  | 'payment'
+  | 'review_submit'
+  | 'email'
+  | 'decline'
+  | 'supply_list'
+  | 'procurement_confirm';
 
 export function HandoffCard({
   kind,
@@ -46,5 +54,7 @@ export function HandoffCard({
       return <EmailHandoff payload={payload} />;
     case 'supply_list':
       return <SupplyListHandoff payload={payload} />;
+    case 'procurement_confirm':
+      return <ProcurementConfirmHandoff payload={payload} />;
   }
 }

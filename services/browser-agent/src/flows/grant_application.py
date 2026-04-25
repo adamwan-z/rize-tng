@@ -26,7 +26,7 @@ from .types import GrantApplicationRequest, GrantProfile
 
 RECORDINGS_DIR = Path(__file__).parent.parent.parent / "recordings"
 HEADLESS = os.environ.get("HEADLESS", "0") == "1"
-DEFAULT_MOCK_URL = os.environ.get("MOCK_TNG_URL", "http://localhost:5000") + "/grant.html"
+DEFAULT_MOCK_URL = os.environ.get("MOCK_TNG_URL", "http://localhost:5050") + "/grant.html"
 
 
 async def run_grant_application(

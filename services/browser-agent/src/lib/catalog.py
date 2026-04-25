@@ -22,7 +22,7 @@ _cache: list[dict[str, Any]] | None = None
 
 
 def _catalog_url() -> str:
-    base = os.environ.get("MOCK_TNG_URL", "http://localhost:5000").rstrip("/")
+    base = os.environ.get("MOCK_TNG_URL", "http://localhost:5050").rstrip("/")
     return f"{base}/data/lotus-catalog.json"
 
 
